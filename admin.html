@@ -3,21 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Panel | SEO India Online</title>
-</head>
-<body>
-  <h1>Admin Dashboard</h1>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <table border="1" cellpadding="10">
-    <tr>
-      <th>Post Title</th>
-      <th>Author</th>
-      <th>Action</th>
-    </tr>
-    <tr>
-      <td>How SEO Helps Small Businesses</td>
-      <td>Guest User</td>
-      <td><button>Delete</button></td>
-    </tr>
+  <style>
+    body { font-family: Arial; background:#f4f6f8; margin:0; }
+    header { background:#0a3d62; color:#fff; padding:15px; text-align:center; }
+    .container {
+      max-width:1000px;
+      margin:20px auto;
+      background:#fff;
+      padding:20px;
+    }
+    table {
+      width:100%;
+      border-collapse:collapse;
+    }
+    th, td {
+      padding:10px;
+      border:1px solid #ddd;
+      text-align:left;
+    }
+    th { background:#eef6ff; }
+    button {
+      background:red;
+      color:#fff;
+      border:none;
+      padding:6px 10px;
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Admin Dashboard</h1>
+  <p>SEO India Online</p>
+</header>
+
+<div class="container">
+  <p id="adminInfo"></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="postsTable"></tbody>
   </table>
+</div>
+
+<!-- 🔥 FIREBASE ADMIN LOGIC -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    doc,
+    deleteDoc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
+    authDomain: "seoindiaonline-dec25.firebaseapp.com",
+    projectId: "seoindiaonline-dec25",
+    storageBucket: "seoindiaonline-dec25.firebasestorage.app",
+    messagingSenderId: "657989422876",
+    appId: "1:657989422876:web:01f521dbc140af58e774d9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const postsTable = document.getElementById("postsTable");
+  const adminInfo = document.getElementById("adminInfo");
+
+  // 🔐 CHECK ADMIN ACCESS
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      location.href = "login.html";
+      return;
+    }
+
+    const adminRef = doc(db, "admins", user.uid);
+    const adminSnap = await getDoc(adminRef);
+
+    if (!adminSnap.exists()) {
+      alert("Access denied. Admins only.");
+      location.href = "index.html";
+      return;
+    }
+
+    adminInfo.textContent = "Admin logged in: " + user.email;
+    loadPosts();
+  });
+
+  // 📄 LOAD ALL POSTS
+  async function loadPosts() {
+    postsTable.innerHTML = "";
+    const querySnapshot = await getDocs(collection(db, "posts"));
+
+    querySnapshot.forEach((docSnap) => {
+      const p = docSnap.data();
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${p.title}</td>
+        <td>${p.category}</td>
+        <td>${p.authorEmail}</td>
+        <td>${p.createdAt?.toDate?.().toLocaleDateString() || ""}</td>
+        <td>
+          <button onclick="deletePost('${docSnap.id}')">Delete</button>
+        </td>
+      `;
+
+      postsTable.appendChild(row);
+    });
+  }
+
+  // 🗑️ DELETE POST (ADMIN ONLY)
+  window.deletePost = async (postId) => {
+    if (!confirm("Delete this post permanently?")) return;
+
+    try {
+      await deleteDoc(doc(db, "posts", postId));
+      alert("Post deleted");
+      loadPosts();
+    } catch (err) {
+      alert("Delete failed: " + err.message);
+    }
+  };
+</script>
+
 </body>
 </html>
