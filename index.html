@@ -11,22 +11,34 @@
 <!-- Google Search Console -->
 <meta name="google-site-verification" content="Dc7Qh7_59JPa3z0dn_QmMgWXft0UVMyMlKksWO44NdQ" />
 
+<!-- Bing Webmaster Tools -->
+<meta name="msvalidate.01" content="439FAFB45A1A046AD53883E98A53FED0" />
+
 <!-- Organization Schema -->
 <script type="application/ld+json">
 {
-  "@context":"https://schema.org",
-  "@type":"Organization",
-  "name":"SEO India Online Free Blog",
-  "url":"https://hanumantsio.github.io/seoindiaonline/",
-  "logo":"https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png",
-  "description":"SEO India Online Free Blog is a free digital marketing blog and article submission platform operated by SEO India Online, an SEO company.",
-  "contactPoint":{
-    "@type":"ContactPoint",
-    "contactType":"customer support",
-    "email":"Hanumant.seoindiaonline@gmail.com",
-    "availableLanguage":"English"
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "SEO India Online Free Blog",
+  "url": "https://hanumantsio.github.io/seoindiaonline/",
+  "logo": "https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png",
+  "description": "SEO India Online Free Blog is a free digital marketing blog and article submission platform operated by SEO India Online, an SEO company.",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "email": "Hanumant.seoindiaonline@gmail.com",
+    "availableLanguage": "English"
   }
 }
+</script>
+
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX', { anonymize_ip: true });
 </script>
 
 <style>
@@ -34,10 +46,25 @@ body { margin:0; font-family:Arial, sans-serif; background:#f4f6f8; }
 header { background:#0a3d62; color:#fff; text-align:center; padding:30px; }
 header img { width:90px; margin-bottom:10px; }
 nav { background:#062f4f; padding:12px; text-align:center; }
-nav a { color:#fff; margin:0 12px; font-weight:bold; text-decoration:none; }
-.container { max-width:1100px; margin:30px auto; background:#fff; padding:30px; }
+nav a {
+  color:#fff;
+  margin:0 12px;
+  font-weight:bold;
+  text-decoration:none;
+}
+.container {
+  max-width:1100px;
+  margin:30px auto;
+  background:#fff;
+  padding:30px;
+}
 section { margin-bottom:40px; }
-footer { background:#0a3d62; color:#fff; text-align:center; padding:15px; }
+footer {
+  background:#0a3d62;
+  color:#fff;
+  text-align:center;
+  padding:15px;
+}
 .info-box {
   background:#eef6ff;
   padding:20px;
@@ -49,11 +76,13 @@ footer { background:#0a3d62; color:#fff; text-align:center; padding:15px; }
 <body>
 
 <header>
-  <img src="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png" alt="SEO India Online Free Blog Logo">
+  <img src="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"
+       alt="SEO India Online Free Blog Logo">
   <h1>SEO India Online Free Blog</h1>
   <p>Free Digital Marketing Blog & Article Submission Platform</p>
 </header>
 
+<!-- NAVIGATION -->
 <nav>
   <a href="index.html">Home</a>
   <a href="posts.html">Posts</a>
@@ -64,41 +93,48 @@ footer { background:#0a3d62; color:#fff; text-align:center; padding:15px; }
 
 <div class="container">
 
-<section>
-  <h2>Free Digital Marketing Articles</h2>
-  <p>
-    <strong>SEO India Online Free Blog</strong> is an initiative by <strong>SEO India Online</strong>,
-    a professional SEO and digital marketing company. This website is dedicated to publishing
-    free digital marketing posts and articles written by marketers, bloggers, and business owners.
-  </p>
-  <p>
-    All content published here is informational, educational, and publicly indexable by search engines.
-    Topics include SEO, digital marketing, content marketing, blogging, social media, and online business.
-  </p>
-</section>
-
-<section>
-  <h2>Why Publish on SEO India Online Free Blog?</h2>
-  <ul>
-    <li>Free digital marketing article submission</li>
-    <li>SEO-friendly and indexable content</li>
-    <li>Open platform for marketers and bloggers</li>
-    <li>Powered by an SEO company</li>
-  </ul>
-</section>
-
-<section>
-  <h2>Contact Information</h2>
-  <div class="info-box">
-    <p><strong>Brand:</strong> SEO India Online Free Blog</p>
-    <p><strong>Company:</strong> SEO India Online (SEO Company)</p>
-    <p><strong>Email:</strong> Hanumant.seoindiaonline@gmail.com</p>
+  <!-- PURPOSE -->
+  <section>
+    <h2>Free Digital Marketing Posts & Articles</h2>
     <p>
-      For content removal, copyright issues, or general inquiries,
-      please contact us via email.
+      <strong>SEO India Online Free Blog</strong> is an initiative by
+      <strong>SEO India Online</strong>, a professional SEO and digital marketing company.
+      This website is dedicated to publishing <strong>free digital marketing posts and articles</strong>
+      for educational and informational purposes.
     </p>
-  </div>
-</section>
+    <p>
+      Contributors can submit original content related to SEO, digital marketing,
+      content marketing, blogging, social media marketing, and online business growth.
+      All content is publicly accessible and indexable by search engines.
+    </p>
+  </section>
+
+  <!-- GUIDELINES -->
+  <section>
+    <h2>Submission Guidelines</h2>
+    <ul>
+      <li>Minimum 200 words per article</li>
+      <li>Original, human-written content only</li>
+      <li>Digital marketing–related topics only</li>
+      <li>SEO-friendly anchors allowed</li>
+      <li>No spam, adult, casino, betting, or illegal content</li>
+    </ul>
+  </section>
+
+  <!-- CONTACT -->
+  <section>
+    <h2>Contact Information</h2>
+    <div class="info-box">
+      <p><strong>Brand:</strong> SEO India Online Free Blog</p>
+      <p><strong>Company:</strong> SEO India Online (SEO Company)</p>
+      <p><strong>Email:</strong> Hanumant.seoindiaonline@gmail.com</p>
+      <p>
+        For content removal requests, copyright concerns,
+        or general inquiries, please contact us via email.
+        We usually respond within 24–48 hours.
+      </p>
+    </div>
+  </section>
 
 </div>
 
@@ -107,4 +143,4 @@ footer { background:#0a3d62; color:#fff; text-align:center; padding:15px; }
 </footer>
 
 </body>
-</html>
+  </html>
