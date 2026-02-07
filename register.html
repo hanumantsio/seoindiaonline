@@ -6,19 +6,94 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: Arial; background:#f4f6f8; }
-    .box { max-width:400px; margin:50px auto; background:#fff; padding:20px; }
-    input, button { width:100%; padding:10px; margin:10px 0; }
-    button { background:#0a3d62; color:#fff; border:none; }
+    .box {
+      max-width:420px;
+      margin:60px auto;
+      background:#fff;
+      padding:20px;
+      border-radius:6px;
+    }
+    input, button {
+      width:100%;
+      padding:10px;
+      margin:10px 0;
+      font-size:16px;
+    }
+    button {
+      background:#0a3d62;
+      color:#fff;
+      border:none;
+      cursor:pointer;
+    }
+    .msg { color:red; }
   </style>
 </head>
+
 <body>
-  <div class="box">
-    <h2>Create Account</h2>
-    <input type="text" placeholder="Full Name">
-    <input type="email" placeholder="Email">
-    <input type="password" placeholder="Password">
-    <button>Register</button>
-    <p>Already registered? <a href="login.html">Login</a></p>
-  </div>
+
+<div class="box">
+  <h2>Create Account</h2>
+
+  <input type="text" id="name" placeholder="Full Name" required>
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="password" id="password" placeholder="Password (min 6 chars)" required>
+
+  <button id="registerBtn">Register</button>
+
+  <p class="msg" id="message"></p>
+
+  <p>Already have an account?
+    <a href="login.html">Login here</a>
+  </p>
+</div>
+
+<!-- 🔥 FIREBASE REGISTER SCRIPT -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, updateProfile }
+    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
+    authDomain: "seoindiaonline-dec25.firebaseapp.com",
+    projectId: "seoindiaonline-dec25",
+    storageBucket: "seoindiaonline-dec25.firebasestorage.app",
+    messagingSenderId: "657989422876",
+    appId: "1:657989422876:web:01f521dbc140af58e774d9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  document.getElementById("registerBtn").addEventListener("click", () => {
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const msg = document.getElementById("message");
+
+    if (password.length < 6) {
+      msg.textContent = "Password must be at least 6 characters";
+      return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        return updateProfile(userCredential.user, {
+          displayName: name
+        });
+      })
+      .then(() => {
+        msg.style.color = "green";
+        msg.textContent = "Registration successful! Redirecting...";
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1200);
+      })
+      .catch(error => {
+        msg.textContent = error.message;
+      });
+  });
+</script>
+
 </body>
 </html>
