@@ -2,115 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Free Blog Posting Site | SEO India Online</title>
-
-  <!-- SEO META TAGS -->
-  <meta name="description" content="SEO India Online is a free blog posting and article submission website. Publish SEO-friendly articles with minimum 200 words. Admin monitored.">
-  <meta name="keywords" content="free blog posting site, article submission site, seo india online, free seo blogs">
-  <meta name="author" content="SEO India Online">
+  <title>Login | SEO India Online</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- GOOGLE ANALYTICS (REPLACE G-XXXXXXXXXX) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
-  </script>
-
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f7f7f7;
-      color: #333;
+    body { font-family: Arial; background:#f4f6f8; }
+    .box {
+      max-width:400px;
+      margin:60px auto;
+      background:#fff;
+      padding:20px;
+      border-radius:6px;
     }
-    header {
-      background: #0a3d62;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
+    input, button {
+      width:100%;
+      padding:10px;
+      margin:10px 0;
+      font-size:16px;
     }
-    nav a {
-      color: #fff;
-      margin: 0 10px;
-      text-decoration: none;
-      font-weight: bold;
+    button {
+      background:#0a3d62;
+      color:#fff;
+      border:none;
+      cursor:pointer;
     }
-    .container {
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-      background: #fff;
-    }
-    h1, h2 {
-      color: #0a3d62;
-    }
-    .rules {
-      background: #eef6ff;
-      padding: 15px;
-      border-left: 4px solid #0a3d62;
-      margin: 20px 0;
-    }
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: #0a3d62;
-      color: #fff;
-      margin-top: 20px;
-    }
+    .msg { color:red; }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>SEO India Online</h1>
-  <p>Free Blog Posting & Article Submission Site</p>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="submit-post.html">Submit Post</a>
-    <a href="login.html">Login</a>
-    <a href="register.html">Register</a>
-  </nav>
-</header>
+<div class="box">
+  <h2>User Login</h2>
 
-<div class="container">
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="password" id="password" placeholder="Password" required>
 
-  <h2>Welcome to Free Blog Posting Platform</h2>
-  <p>
-    SEO India Online is a free blog posting and article submission website where users
-    can publish SEO-friendly content instantly. This platform is ideal for bloggers,
-    digital marketers, business owners, and SEO professionals.
-  </p>
+  <button id="loginBtn">Login</button>
 
-  <div class="rules">
-    <h2>Article Submission Rules</h2>
-    <ul>
-      <li>Minimum <strong>200 words</strong> required</li>
-      <li>Content must be <strong>100% unique</strong></li>
-      <li>Only SEO-friendly and relevant topics allowed</li>
-      <li>No adult, casino, gambling, or illegal content</li>
-      <li>Limited and relevant outbound links only</li>
-      <li>Admin has full rights to delete any post</li>
-    </ul>
-  </div>
+  <p class="msg" id="message"></p>
 
-  <h2>Why Publish With Us?</h2>
-  <ul>
-    <li>Free article submission</li>
-    <li>SEO-optimized pages</li>
-    <li>Fast Google indexing</li>
-    <li>Do-follow backlinks (as per rules)</li>
-    <li>Admin-monitored quality control</li>
-  </ul>
-
+  <p>New user? <a href="register.html">Register here</a></p>
 </div>
 
-<footer>
-  <p>© 2026 SEO India Online | Free Blog Posting Site</p>
-</footer>
+<!-- 🔥 FIREBASE LOGIN SCRIPT -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
+    authDomain: "seoindiaonline-dec25.firebaseapp.com",
+    projectId: "seoindiaonline-dec25",
+    storageBucket: "seoindiaonline-dec25.firebasestorage.app",
+    messagingSenderId: "657989422876",
+    appId: "1:657989422876:web:01f521dbc140af58e774d9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const msg = document.getElementById("message");
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        msg.style.color = "green";
+        msg.textContent = "Login successful!";
+        setTimeout(() => {
+          window.location.href = "submit-post.html";
+        }, 1000);
+      })
+      .catch(error => {
+        msg.textContent = error.message;
+      });
+  });
+</script>
 
 </body>
 </html>
