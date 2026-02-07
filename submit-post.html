@@ -20,7 +20,7 @@
       margin:8px 0;
       font-size:16px;
     }
-    textarea { height:220px; }
+    textarea { height:240px; }
     button {
       background:#0a3d62;
       color:#fff;
@@ -53,9 +53,9 @@
     <ul>
       <li>Minimum <strong>200 words</strong></li>
       <li>100% unique content</li>
-      <li>No adult, casino, betting, illegal topics</li>
+      <li>No adult, casino, betting, or illegal topics</li>
       <li>Limited & relevant links only</li>
-      <li>Admin can delete any post</li>
+      <li>Admin can delete any post anytime</li>
     </ul>
   </div>
 
@@ -74,14 +74,19 @@
 
 </div>
 
-<!-- 🔥 FIREBASE + AUTH PROTECTION -->
+<!-- 🔥 FIREBASE + FIRESTORE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import {
     getAuth,
-    onAuthStateChanged,
-    signOut
+    onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
@@ -94,31 +99,51 @@
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
 
   // 🔐 PROTECT PAGE
   onAuthStateChanged(auth, (user) => {
     if (!user) {
       window.location.replace("login.html");
     } else {
+      currentUser = user;
       document.getElementById("userInfo").textContent =
         "Logged in as: " + user.email;
     }
   });
 
-  // 📝 FORM (UI ONLY – DB COMING NEXT)
-  document.getElementById("postForm").addEventListener("submit", (e) => {
+  // 📝 SAVE POST TO FIRESTORE
+  document.getElementById("postForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const content = document.getElementById("content").value;
-    const words = content.trim().split(/\s+/).length;
+    const title = document.getElementById("title").value.trim();
+    const category = document.getElementById("category").value.trim();
+    const content = document.getElementById("content").value.trim();
 
-    if (words < 200) {
+    const wordCount = content.split(/\s+/).length;
+    if (wordCount < 200) {
       alert("Minimum 200 words required.");
       return;
     }
 
-    alert("Post submitted (Firestore connection next step)");
-    e.target.reset();
+    try {
+      await addDoc(collection(db, "posts"), {
+        title: title,
+        category: category,
+        content: content,
+        authorEmail: currentUser.email,
+        authorUid: currentUser.uid,
+        createdAt: serverTimestamp(),
+        status: "published"
+      });
+
+      alert("Post submitted successfully!");
+      e.target.reset();
+    } catch (err) {
+      alert("Error saving post: " + err.message);
+    }
   });
 </script>
 
