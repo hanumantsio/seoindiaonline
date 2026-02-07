@@ -3,55 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <title>Register | SEO India Online</title>
+  <meta name="description" content="Create an account on SEO India Online to submit SEO-friendly articles.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a3d62">
+
   <style>
-    body { font-family: Arial; background:#f4f6f8; }
-    .box {
-      max-width:420px;
-      margin:60px auto;
-      background:#fff;
-      padding:20px;
-      border-radius:6px;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0a3d62, #1e90ff);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    input, button {
-      width:100%;
-      padding:10px;
-      margin:10px 0;
-      font-size:16px;
+    .box {
+      background: #fff;
+      max-width: 440px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    h1 { text-align: center; color: #0a3d62; }
+    p { text-align: center; color: #666; font-size: 14px; }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
     button {
-      background:#0a3d62;
-      color:#fff;
-      border:none;
-      cursor:pointer;
+      width: 100%;
+      padding: 12px;
+      background: #0a3d62;
+      color: #fff;
+      border: none;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
     }
-    .msg { color:red; }
+    .captcha {
+      background: #eef6ff;
+      padding: 10px;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .msg {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      color: red;
+    }
+    .links {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+    .links a { color: #0a3d62; font-weight: bold; text-decoration: none; }
   </style>
 </head>
 
 <body>
 
 <div class="box">
-  <h2>Create Account</h2>
+  <h1>Create Account</h1>
+  <p>Register to submit SEO-friendly articles</p>
 
   <input type="text" id="name" placeholder="Full Name" required>
-  <input type="email" id="email" placeholder="Email" required>
+  <input type="email" id="email" placeholder="Email Address" required>
   <input type="password" id="password" placeholder="Password (min 6 chars)" required>
 
-  <button id="registerBtn">Register</button>
+  <!-- ✅ SIMPLE CAPTCHA -->
+  <div class="captcha">
+    What is <strong id="capA"></strong> + <strong id="capB"></strong> ?
+    <input type="number" id="captchaInput" placeholder="Your answer" required>
+  </div>
 
-  <p class="msg" id="message"></p>
+  <button id="registerBtn">Create Account</button>
 
-  <p>Already have an account?
-    <a href="login.html">Login here</a>
-  </p>
+  <div class="msg" id="message"></div>
+
+  <div class="links">
+    Already have an account? <a href="login.html">Login</a>
+  </div>
 </div>
 
-<!-- 🔥 FIREBASE REGISTER SCRIPT -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, updateProfile }
-    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    updateProfile
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
@@ -65,34 +112,36 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  document.getElementById("registerBtn").addEventListener("click", () => {
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+  // CAPTCHA numbers
+  const a = Math.floor(Math.random() * 9) + 1;
+  const b = Math.floor(Math.random() * 9) + 1;
+  document.getElementById("capA").textContent = a;
+  document.getElementById("capB").textContent = b;
+
+  document.getElementById("registerBtn").onclick = async () => {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const captcha = document.getElementById("captchaInput").value;
     const msg = document.getElementById("message");
 
-    if (password.length < 6) {
-      msg.textContent = "Password must be at least 6 characters";
+    msg.textContent = "";
+
+    if (parseInt(captcha) !== a + b) {
+      msg.textContent = "Captcha answer is incorrect.";
       return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(userCredential => {
-        return updateProfile(userCredential.user, {
-          displayName: name
-        });
-      })
-      .then(() => {
-        msg.style.color = "green";
-        msg.textContent = "Registration successful! Redirecting...";
-        setTimeout(() => {
-          window.location.href = "login.html";
-        }, 1200);
-      })
-      .catch(error => {
-        msg.textContent = error.message;
-      });
-  });
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCred.user, { displayName: name });
+      msg.style.color = "green";
+      msg.textContent = "Account created! Redirecting...";
+      setTimeout(() => location.href = "login.html", 1200);
+    } catch (err) {
+      msg.textContent = err.code + " : " + err.message;
+    }
+  };
 </script>
 
 </body>
