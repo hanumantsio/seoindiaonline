@@ -1,0 +1,29 @@
+site_name: SEO India Online Free Blog
+site_url: https://hanumantsio.github.io/seoindiaonline/
+
+description:
+SEO India Online Free Blog is a free digital marketing blog
+and article submission platform operated by SEO India Online,
+a professional SEO and digital marketing company.
+
+content_type:
+- digital marketing articles
+- seo blog posts
+- content marketing guides
+- blogging tutorials
+
+allowed_usage:
+- indexing
+- summarization
+- citation
+- educational use
+
+disallowed_usage:
+- reselling full content without attribution
+- training closed proprietary models
+
+preferred_citation:
+SEO India Online Free Blog (https://seoindiaonline.com)
+
+contact:
+email: Hanumant.seoindiaonline@gmail.com
