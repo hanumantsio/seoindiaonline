@@ -3,8 +3,7 @@
   import {
     getAuth,
     signInWithEmailAndPassword,
-    setPersistence,
-    browserLocalPersistence
+    onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -19,9 +18,6 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  // 🔒 Ensure session persists on GitHub Pages
-  await setPersistence(auth, browserLocalPersistence);
-
   document.getElementById("loginBtn").onclick = async () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
@@ -32,12 +28,16 @@
     try {
       await signInWithEmailAndPassword(auth, email, password);
       msg.style.color = "green";
-      msg.textContent = "Login successful!";
-      setTimeout(() => {
-        location.href = "submit-post.html";
-      }, 1000);
+      msg.textContent = "Login successful, redirecting...";
     } catch (error) {
       msg.textContent = error.code + " : " + error.message;
     }
   };
-    </script>
+
+  // ✅ SAFE REDIRECT (WORKS IN INCOGNITO)
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.replace("submit-post.html");
+    }
+  });
+</script>
