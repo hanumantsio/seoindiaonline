@@ -2,114 +2,125 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Submit Free Blog Post | SEO India Online</title>
-
-  <!-- SEO META -->
-  <meta name="description" content="Submit your free SEO blog post. Minimum 200 words required. Admin monitored content.">
+  <title>Submit Post | SEO India Online</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      color: #333;
-    }
-    header {
-      background: #0a3d62;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
-    }
+    body { font-family: Arial; background:#f4f6f8; margin:0; }
+    header { background:#0a3d62; color:#fff; padding:15px; text-align:center; }
     .container {
-      max-width: 900px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
+      max-width:900px;
+      margin:20px auto;
+      background:#fff;
+      padding:20px;
     }
-    h1, h2 {
-      color: #0a3d62;
+    input, textarea, button {
+      width:100%;
+      padding:10px;
+      margin:8px 0;
+      font-size:16px;
+    }
+    textarea { height:220px; }
+    button {
+      background:#0a3d62;
+      color:#fff;
+      border:none;
+      cursor:pointer;
     }
     .rules {
-      background: #eef6ff;
-      padding: 15px;
-      border-left: 4px solid #0a3d62;
-      margin-bottom: 20px;
+      background:#eef6ff;
+      padding:15px;
+      border-left:4px solid #0a3d62;
+      margin-bottom:20px;
     }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      font-size: 16px;
-    }
-    textarea {
-      height: 220px;
-    }
-    button {
-      background: #0a3d62;
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: #0a3d62;
-      color: #fff;
-      margin-top: 20px;
-    }
+    #userInfo { font-size:14px; color:green; }
   </style>
 </head>
 
 <body>
 
 <header>
-  <h1>Submit Your Blog Post</h1>
-  <p>Free Article Submission – SEO India Online</p>
+  <h1>Submit Blog Post</h1>
+  <p>SEO India Online – Free Blog Posting</p>
 </header>
 
 <div class="container">
 
+  <p id="userInfo"></p>
+
   <div class="rules">
-    <h2>Article Submission Rules (Must Read)</h2>
+    <h3>Posting Rules</h3>
     <ul>
-      <li>Minimum <strong>200 words</strong> required</li>
-      <li>Article must be <strong>100% unique</strong></li>
-      <li>SEO-friendly title and headings (H2, H3)</li>
-      <li>No adult, gambling, casino, betting, or illegal content</li>
-      <li>Limited and relevant outbound links only</li>
-      <li>No spam, copied, or AI-generated low-quality content</li>
-      <li><strong>Admin has full rights to delete any post</strong></li>
+      <li>Minimum <strong>200 words</strong></li>
+      <li>100% unique content</li>
+      <li>No adult, casino, betting, illegal topics</li>
+      <li>Limited & relevant links only</li>
+      <li>Admin can delete any post</li>
     </ul>
   </div>
 
-  <h2>Post Submission Form</h2>
+  <form id="postForm">
+    <input type="text" id="title" placeholder="Post Title" required>
+    <input type="text" id="category" placeholder="Category (SEO, Marketing)" required>
+    <textarea id="content" placeholder="Write your article (minimum 200 words)" required></textarea>
 
-  <form>
-    <label>Post Title</label>
-    <input type="text" placeholder="Enter SEO-friendly title" required>
-
-    <label>Category</label>
-    <input type="text" placeholder="e.g. SEO, Digital Marketing" required>
-
-    <label>Article Content</label>
-    <textarea placeholder="Write minimum 200 words article..." required></textarea>
-
-    <p>
+    <label>
       <input type="checkbox" required>
-      I confirm that this article follows all submission rules.
-    </p>
+      I agree to the posting rules
+    </label>
 
     <button type="submit">Submit Post</button>
   </form>
 
 </div>
 
-<footer>
-  <p>© 2026 SEO India Online | Free Blog Posting Site</p>
-</footer>
+<!-- 🔥 FIREBASE + AUTH PROTECTION -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
+    authDomain: "seoindiaonline-dec25.firebaseapp.com",
+    projectId: "seoindiaonline-dec25",
+    storageBucket: "seoindiaonline-dec25.firebasestorage.app",
+    messagingSenderId: "657989422876",
+    appId: "1:657989422876:web:01f521dbc140af58e774d9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // 🔐 PROTECT PAGE
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.replace("login.html");
+    } else {
+      document.getElementById("userInfo").textContent =
+        "Logged in as: " + user.email;
+    }
+  });
+
+  // 📝 FORM (UI ONLY – DB COMING NEXT)
+  document.getElementById("postForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const content = document.getElementById("content").value;
+    const words = content.trim().split(/\s+/).length;
+
+    if (words < 200) {
+      alert("Minimum 200 words required.");
+      return;
+    }
+
+    alert("Post submitted (Firestore connection next step)");
+    e.target.reset();
+  });
+</script>
 
 </body>
 </html>
