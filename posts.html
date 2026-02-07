@@ -3,21 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <title>All Blog Posts | SEO India Online</title>
-  <meta name="description" content="Browse all SEO-friendly blog posts submitted by users.">
+  <meta name="description" content="Browse all SEO-friendly blog posts submitted by users on SEO India Online.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body { font-family: Arial; background:#f4f6f8; margin:0; }
+    header { background:#0a3d62; color:#fff; padding:15px; text-align:center; }
+    .container {
+      max-width:900px;
+      margin:20px auto;
+      background:#fff;
+      padding:20px;
+    }
+    .post {
+      border-bottom:1px solid #ddd;
+      padding:15px 0;
+    }
+    .post h2 {
+      margin:0;
+      color:#0a3d62;
+    }
+    .post a {
+      text-decoration:none;
+      color:#0a3d62;
+    }
+    .meta {
+      font-size:14px;
+      color:#666;
+    }
+  </style>
 </head>
+
 <body>
+
+<header>
   <h1>Latest Blog Posts</h1>
+  <p>SEO India Online – Free Blog Posting</p>
+</header>
 
-  <article>
-    <h2><a href="post.html">How SEO Helps Small Businesses</a></h2>
-    <p>Posted in SEO • 200+ words</p>
-  </article>
+<div class="container" id="postsContainer">
+  <p>Loading posts...</p>
+</div>
 
-  <article>
-    <h2><a href="post.html">Best Digital Marketing Tips</a></h2>
-    <p>Posted in Marketing • 350 words</p>
-  </article>
+<!-- 🔥 FIREBASE + LOAD POSTS -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    query,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
+    authDomain: "seoindiaonline-dec25.firebaseapp.com",
+    projectId: "seoindiaonline-dec25",
+    storageBucket: "seoindiaonline-dec25.firebasestorage.app",
+    messagingSenderId: "657989422876",
+    appId: "1:657989422876:web:01f521dbc140af58e774d9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const container = document.getElementById("postsContainer");
+
+  async function loadPosts() {
+    container.innerHTML = "";
+
+    const q = query(
+      collection(db, "posts"),
+      orderBy("createdAt", "desc")
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      container.innerHTML = "<p>No posts found.</p>";
+      return;
+    }
+
+    snapshot.forEach(docSnap => {
+      const p = docSnap.data();
+      const div = document.createElement("div");
+      div.className = "post";
+
+      div.innerHTML = `
+        <h2>
+          <a href="post.html?id=${docSnap.id}">
+            ${p.title}
+          </a>
+        </h2>
+        <p class="meta">
+          Category: ${p.category} |
+          Author: ${p.authorEmail} |
+          Date: ${p.createdAt?.toDate?.().toLocaleDateString() || ""}
+        </p>
+        <p>
+          ${p.content.substring(0, 150)}...
+        </p>
+      `;
+
+      container.appendChild(div);
+    });
+  }
+
+  loadPosts();
+</script>
 
 </body>
-</html>
+  </html>
