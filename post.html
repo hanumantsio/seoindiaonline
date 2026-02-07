@@ -3,15 +3,43 @@
 <head>
   <meta charset="UTF-8">
 
-  <!-- SEO (will be updated dynamically) -->
-  <title>Blog Post | SEO India Online</title>
-  <meta name="description" content="Read SEO-friendly blog posts on SEO India Online.">
+  <!-- SEO (dynamic) -->
+  <title>Article | SEO India Online</title>
+  <meta name="description" content="Read SEO-friendly articles on SEO India Online.">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ✅ ORGANIZATION SCHEMA WITH LOGO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SEO India Online",
+    "url": "https://hanumantsio.github.io/seoindiaonline/",
+    "logo": "https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"
+  }
+  </script>
+
+  <!-- ✅ ARTICLE SCHEMA (DYNAMIC) -->
+  <script type="application/ld+json" id="articleSchema"></script>
+
+  <!-- ✅ BREADCRUMB SCHEMA (DYNAMIC) -->
+  <script type="application/ld+json" id="breadcrumbSchema"></script>
 
   <style>
     body { font-family: Arial; background:#f4f6f8; margin:0; }
     header { background:#0a3d62; color:#fff; padding:15px; text-align:center; }
+    nav {
+      background:#062f4f;
+      padding:10px;
+      text-align:center;
+    }
+    nav a {
+      color:#fff;
+      margin:0 10px;
+      text-decoration:none;
+      font-weight:bold;
+    }
     .container {
       max-width:900px;
       margin:20px auto;
@@ -20,7 +48,7 @@
     }
     h1 { color:#0a3d62; }
     .meta { font-size:14px; color:#666; margin-bottom:15px; }
-    .content { line-height:1.6; }
+    .content { line-height:1.7; }
   </style>
 </head>
 
@@ -30,12 +58,17 @@
   <h1 id="postTitle">Loading...</h1>
 </header>
 
+<nav>
+  <a href="index.html">Home</a>
+  <a href="posts.html">Posts</a>
+</nav>
+
 <div class="container">
   <p class="meta" id="postMeta"></p>
   <div class="content" id="postContent"></div>
 </div>
 
-<!-- 🔥 FIREBASE LOAD SINGLE POST -->
+<!-- 🔥 FIREBASE LOAD POST + SCHEMA -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import {
@@ -67,8 +100,8 @@
   }
 
   async function loadPost(id) {
-    const postRef = doc(db, "posts", id);
-    const snap = await getDoc(postRef);
+    const ref = doc(db, "posts", id);
+    const snap = await getDoc(ref);
 
     if (!snap.exists()) {
       document.getElementById("postContent").innerHTML =
@@ -88,14 +121,67 @@
     document.getElementById("postContent").innerHTML =
       p.content.replace(/\n/g, "<br>");
 
-    // SEO dynamic update
+    // SEO meta update
     document.title = p.title + " | SEO India Online";
-    document
-      .querySelector("meta[name='description']")
-      .setAttribute(
-        "content",
-        p.content.substring(0, 160)
-      );
+    document.querySelector("meta[name='description']")
+      .setAttribute("content", p.content.substring(0, 160));
+
+    // ✅ ARTICLE SCHEMA
+    const articleSchema = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": p.title,
+      "description": p.content.substring(0, 160),
+      "author": {
+        "@type": "Person",
+        "name": p.authorEmail
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "SEO India Online",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"
+        }
+      },
+      "datePublished": p.createdAt?.toDate?.().toISOString(),
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": window.location.href
+      }
+    };
+
+    document.getElementById("articleSchema").textContent =
+      JSON.stringify(articleSchema);
+
+    // ✅ BREADCRUMB SCHEMA
+    const breadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://hanumantsio.github.io/seoindiaonline/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Posts",
+          "item": "https://hanumantsio.github.io/seoindiaonline/posts.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": p.title,
+          "item": window.location.href
+        }
+      ]
+    };
+
+    document.getElementById("breadcrumbSchema").textContent =
+      JSON.stringify(breadcrumbSchema);
   }
 </script>
 
