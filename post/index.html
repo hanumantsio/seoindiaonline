@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Loading…</title>
+<script>
+const slug = location.pathname.replace("/post/", "");
+if(slug){
+  location.replace("/post.html?slug=" + encodeURIComponent(slug));
+}
+</script>
+</head>
+<body>Loading…</body>
+</html>
