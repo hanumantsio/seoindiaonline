@@ -4,193 +4,169 @@
 <meta charset="UTF-8">
 
 <title>Submit Post | SEO India Online Free Blog</title>
-
-<meta name="description" content="Submit your digital marketing article on SEO India Online Free Blog. Free blog posting platform.">
+<meta name="description" content="Submit a free SEO and digital marketing article on SEO India Online Free Blog.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Google Analytics GA4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=GT-NFP4RC7H"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-TS799JPTG6', { anonymize_ip: true });
-</script>
+<!-- Favicon -->
+<link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
 
 <style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#f4f6f8;
-}
-nav{
-  background:#062f4f;
-  padding:12px;
-  text-align:center;
-}
-nav a{
-  color:#fff;
-  margin:0 12px;
-  font-weight:bold;
-  text-decoration:none;
-}
-.header{
-  background:#0a3d62;
-  color:#fff;
-  text-align:center;
-  padding:25px;
-}
+body{margin:0;font-family:Arial;background:#f4f6f8}
+nav{background:#062f4f;padding:12px;text-align:center}
+nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
+
 .container{
-  max-width:900px;
+  max-width:1200px;
   margin:30px auto;
   background:#fff;
-  padding:30px;
+  padding:20px
 }
-input, textarea, button{
+.editor-wrap{
+  display:flex;
+  gap:20px
+}
+.editor, .preview{
+  width:50%;
+  border:1px solid #ccc;
+  padding:15px;
+  min-height:400px;
+  overflow:auto
+}
+.editor textarea{
   width:100%;
-  padding:12px;
-  margin-bottom:15px;
-  font-size:16px;
+  height:100%;
+  border:none;
+  outline:none;
+  resize:none;
+  font-family:monospace;
+  font-size:14px
 }
-textarea{
-  min-height:260px;
+.preview{
+  background:#fafafa
 }
 button{
+  margin-top:15px;
+  padding:10px 20px;
   background:#0a3d62;
   color:#fff;
   border:none;
-  cursor:pointer;
-}
-button:hover{
-  background:#062f4f;
-}
-.note{
-  font-size:14px;
-  color:#555;
-}
-.error{
-  color:red;
-  margin-bottom:15px;
-}
-footer{
-  background:#0a3d62;
-  color:#fff;
-  text-align:center;
-  padding:15px;
+  cursor:pointer
 }
 </style>
 </head>
 
 <body>
 
-<!-- NAVIGATION -->
 <nav>
   <a href="index.html">Home</a>
   <a href="posts.html">Posts</a>
   <a href="submit-post.html">Submit</a>
-  <a href="login.html">Login</a>
-  <a href="register.html">Register</a>
 </nav>
 
-<!-- HEADER -->
-<div class="header">
-  <h1>SEO India Online Free Blog</h1>
-  <p>Submit Your Digital Marketing Article</p>
-</div>
-
-<!-- FORM -->
 <div class="container">
+  <h1>Submit Blog Post</h1>
 
-  <h2>Submit New Post</h2>
+  <input id="title" placeholder="Post Title" style="width:100%;padding:10px;margin-bottom:10px">
 
-  <div class="note">
-    ✔ Minimum 200 words<br>
-    ✔ Original content only<br>
-    ✔ HTML, Markdown & BBCode supported<br>
-    ✔ SEO-friendly links allowed
+  <div class="editor-wrap">
+    <!-- LEFT: EDITOR -->
+    <div class="editor">
+      <textarea id="content" placeholder="Write your post here (HTML / Markdown / BBCode supported)"></textarea>
+    </div>
+
+    <!-- RIGHT: LIVE PREVIEW -->
+    <div class="preview" id="preview">
+      <em>Live preview will appear here…</em>
+    </div>
   </div>
 
-  <div id="errorMsg" class="error"></div>
-
-  <form id="postForm">
-    <input type="text" id="title" placeholder="Post Title" required>
-
-    <textarea id="content" placeholder="Write your article here (HTML / Markdown / BBCode supported)" required></textarea>
-
-    <button type="submit">Publish Post</button>
-  </form>
-
+  <button id="publish">Publish Post</button>
 </div>
 
-<footer>
-  © 2026 SEO India Online Free Blog
-</footer>
-
-<!-- FIREBASE POST SUBMISSION -->
 <script type="module">
 import { auth, db } from "./firebase.js";
 import {
   addDoc,
   collection,
-  serverTimestamp
+  serverTimestamp,
+  query,
+  where,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-import { onAuthStateChanged }
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-const form = document.getElementById("postForm");
-const errorMsg = document.getElementById("errorMsg");
+/* ---------------- SLUG ---------------- */
+function generateSlug(title){
+  return title.toLowerCase()
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/(^-|-$)/g,"");
+}
 
-let currentUser = null;
-
-// Auth check
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    location.href = "login.html";
-  } else {
-    currentUser = user;
+async function getUniqueSlug(base){
+  let slug=base, i=1;
+  while(true){
+    const q=query(collection(db,"posts"),where("slug","==",slug));
+    const s=await getDocs(q);
+    if(s.empty) return slug;
+    slug=`${base}-${++i}`;
   }
+}
+
+/* ---------------- PARSER ---------------- */
+function parseContent(text){
+  let html=text;
+
+  /* Markdown */
+  html=html.replace(/^## (.*$)/gim,"<h2>$1</h2>");
+  html=html.replace(/^### (.*$)/gim,"<h3>$1</h3>");
+  html=html.replace(/\*\*(.*?)\*\*/gim,"<strong>$1</strong>");
+  html=html.replace(/\*(.*?)\*/gim,"<em>$1</em>");
+  html=html.replace(/^\- (.*$)/gim,"<li>$1</li>");
+  html=html.replace(/(<li>.*<\/li>)/gims,"<ul>$1</ul>");
+
+  /* BBCode */
+  html=html.replace(/\[b\](.*?)\[\/b\]/gim,"<strong>$1</strong>");
+  html=html.replace(/\[i\](.*?)\[\/i\]/gim,"<em>$1</em>");
+  html=html.replace(/\[url=(.*?)\](.*?)\[\/url\]/gim,"<a href='$1'>$2</a>");
+
+  /* Line breaks */
+  html=html.replace(/\n$/gim,"<br>");
+
+  return html;
+}
+
+/* ---------------- LIVE PREVIEW ---------------- */
+const textarea=document.getElementById("content");
+const preview=document.getElementById("preview");
+
+textarea.addEventListener("input",()=>{
+  preview.innerHTML=parseContent(textarea.value);
 });
 
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-  errorMsg.textContent = "";
-
-  const title = document.getElementById("title").value.trim();
-  const content = document.getElementById("content").value.trim();
-
-  if (!title || !content) {
-    errorMsg.textContent = "All fields are required.";
+/* ---------------- PUBLISH ---------------- */
+document.getElementById("publish").onclick=async()=>{
+  const title=document.getElementById("title").value.trim();
+  if(!title || textarea.value.length<200){
+    alert("Title required & minimum 200 words.");
     return;
   }
 
-  const wordCount = content.split(/\s+/).length;
-  if (wordCount < 200) {
-    errorMsg.textContent = "Post must be at least 200 words.";
-    return;
-  }
+  const baseSlug=generateSlug(title);
+  const slug=await getUniqueSlug(baseSlug);
+  const contentHTML=parseContent(textarea.value);
 
-  try {
-    await addDoc(collection(db, "posts"), {
-      title: title,
-      content: content,
-      authorName: currentUser.displayName || "Guest",
-      createdAt: serverTimestamp(),
-      status: "published"
-    });
+  await addDoc(collection(db,"posts"),{
+    title,
+    slug,
+    content:contentHTML,
+    authorName:auth.currentUser.displayName,
+    createdAt:serverTimestamp(),
+    status:"published"
+  });
 
-    // GA4 event
-    gtag('event', 'post_submitted', {
-      event_category: 'content',
-      event_label: title
-    });
-
-    alert("Post published successfully!");
-    location.href = "posts.html";
-
-  } catch (err) {
-    errorMsg.textContent = err.message;
-  }
-});
+  alert("Post published successfully!");
+  location.href="index.html";
+};
 </script>
 
 </body>
