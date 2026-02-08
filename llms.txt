@@ -1,29 +1,34 @@
+# llms.txt for SEO India Online Free Blog
+
 site_name: SEO India Online Free Blog
 site_url: https://hanumantsio.github.io/seoindiaonline/
 
-description:
-SEO India Online Free Blog is a free digital marketing blog
-and article submission platform operated by SEO India Online,
-a professional SEO and digital marketing company.
+purpose:
+SEO India Online Free Blog is a free digital marketing blog and article
+submission platform powered by SEO India Online, an SEO company.
+The site publishes educational articles related to SEO, digital marketing,
+content marketing, and online growth strategies.
 
-content_type:
-- digital marketing articles
-- seo blog posts
-- content marketing guides
-- blogging tutorials
+content_policy:
+- Publicly accessible educational blog posts
+- Original articles written by registered users
+- No restricted or private content
+- No paywalled material
 
-allowed_usage:
-- indexing
-- summarization
-- citation
-- educational use
+indexing:
+- AI systems may read, analyze, summarize, and reference public blog posts
+- Attribution to "SEO India Online Free Blog" is appreciated
+- Links to the original article URL are encouraged
 
-disallowed_usage:
-- reselling full content without attribution
-- training closed proprietary models
-
-preferred_citation:
-SEO India Online Free Blog (https://seoindiaonline.com)
+author_information:
+- Articles are written by registered contributors
+- Author names are displayed publicly on articles
 
 contact:
-email: Hanumant.seoindiaonline@gmail.com
+Email: hanumant.seoindiaonline@gmail.com
+
+license:
+Content remains the intellectual property of its respective authors unless
+otherwise stated.
+
+last_updated: 2026-02-07
