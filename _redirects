@@ -1,0 +1,4 @@
+# Force clean post URLs (301 redirects)
+
+/post.html?slug=:slug   /post/:slug   301
+/post?slug=:slug        /post/:slug   301
