@@ -1,188 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-  <!-- SEO (dynamic) -->
-  <title>Article | SEO India Online</title>
-  <meta name="description" content="Read SEO-friendly articles on SEO India Online.">
+<title>Blog Article | SEO India Online Free Blog</title>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Read digital marketing articles published on SEO India Online Free Blog.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- ✅ ORGANIZATION SCHEMA WITH LOGO -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "SEO India Online",
-    "url": "https://hanumantsio.github.io/seoindiaonline/",
-    "logo": "https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"
-  }
-  </script>
+<!-- Canonical -->
+<link rel="canonical" id="canonicalLink">
 
-  <!-- ✅ ARTICLE SCHEMA (DYNAMIC) -->
-  <script type="application/ld+json" id="articleSchema"></script>
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GT-NFP4RC7H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-TS799JPTG6', { anonymize_ip: true });
+</script>
 
-  <!-- ✅ BREADCRUMB SCHEMA (DYNAMIC) -->
-  <script type="application/ld+json" id="breadcrumbSchema"></script>
+<!-- Article Schema -->
+<script type="application/ld+json" id="articleSchema"></script>
 
-  <style>
-    body { font-family: Arial; background:#f4f6f8; margin:0; }
-    header { background:#0a3d62; color:#fff; padding:15px; text-align:center; }
-    nav {
-      background:#062f4f;
-      padding:10px;
-      text-align:center;
-    }
-    nav a {
-      color:#fff;
-      margin:0 10px;
-      text-decoration:none;
-      font-weight:bold;
-    }
-    .container {
-      max-width:900px;
-      margin:20px auto;
-      background:#fff;
-      padding:20px;
-    }
-    h1 { color:#0a3d62; }
-    .meta { font-size:14px; color:#666; margin-bottom:15px; }
-    .content { line-height:1.7; }
-  </style>
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f4f6f8;
+}
+nav{
+  background:#062f4f;
+  padding:12px;
+  text-align:center;
+}
+nav a{
+  color:#fff;
+  margin:0 12px;
+  font-weight:bold;
+  text-decoration:none;
+}
+.container{
+  max-width:900px;
+  margin:30px auto;
+  background:#fff;
+  padding:30px;
+}
+#meta{
+  color:#666;
+  font-size:14px;
+  margin-bottom:20px;
+}
+footer{
+  background:#0a3d62;
+  color:#fff;
+  text-align:center;
+  padding:15px;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  <h1 id="postTitle">Loading...</h1>
-</header>
-
+<!-- NAVIGATION -->
 <nav>
   <a href="index.html">Home</a>
   <a href="posts.html">Posts</a>
+  <a href="submit-post.html">Submit</a>
+  <a href="login.html">Login</a>
+  <a href="register.html">Register</a>
 </nav>
 
+<!-- POST CONTENT -->
 <div class="container">
-  <p class="meta" id="postMeta"></p>
-  <div class="content" id="postContent"></div>
+  <h1 id="postTitle">Loading…</h1>
+  <div id="meta"></div>
+  <div id="postContent"></div>
 </div>
 
-<!-- 🔥 FIREBASE LOAD POST + SCHEMA -->
+<footer>
+  © 2026 SEO India Online Free Blog
+</footer>
+
+<!-- FIREBASE POST LOAD -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import {
-    getFirestore,
-    doc,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { db } from "./firebase.js";
+import { doc, getDoc }
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
-    authDomain: "seoindiaonline-dec25.firebaseapp.com",
-    projectId: "seoindiaonline-dec25",
-    storageBucket: "seoindiaonline-dec25.firebasestorage.app",
-    messagingSenderId: "657989422876",
-    appId: "1:657989422876:web:01f521dbc140af58e774d9"
-  };
+const postId = new URLSearchParams(window.location.search).get("id");
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+if (!postId) {
+  document.getElementById("postTitle").textContent = "Post not found";
+  throw new Error("Missing post ID");
+}
 
-  const params = new URLSearchParams(window.location.search);
-  const postId = params.get("id");
+const snap = await getDoc(doc(db, "posts", postId));
 
-  if (!postId) {
-    document.getElementById("postContent").innerHTML =
-      "<p>Post not found.</p>";
-  } else {
-    loadPost(postId);
-  }
+if (!snap.exists()) {
+  document.getElementById("postTitle").textContent = "Post not found";
+  throw new Error("Post not found");
+}
 
-  async function loadPost(id) {
-    const ref = doc(db, "posts", id);
-    const snap = await getDoc(ref);
+const post = snap.data();
 
-    if (!snap.exists()) {
-      document.getElementById("postContent").innerHTML =
-        "<p>Post not found.</p>";
-      return;
+// Title & content
+document.getElementById("postTitle").textContent = post.title;
+document.getElementById("postContent").innerHTML = post.content;
+
+// Author + Date (NO category)
+const dateObj = post.createdAt?.toDate();
+const dateStr = dateObj ? dateObj.toLocaleDateString() : "";
+
+document.getElementById("meta").innerHTML =
+  `Author: ${post.authorName || "Guest"} | Date: ${dateStr}`;
+
+// Canonical
+document.getElementById("canonicalLink").href = window.location.href;
+
+// Article Schema
+document.getElementById("articleSchema").textContent = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": post.title,
+  "author": {
+    "@type": "Person",
+    "name": post.authorName || "Guest"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SEO India Online Free Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"
     }
-
-    const p = snap.data();
-
-    // Page content
-    document.getElementById("postTitle").textContent = p.title;
-    document.getElementById("postMeta").textContent =
-      "Category: " + p.category +
-      " | Author: " + p.authorEmail +
-      " | Date: " + (p.createdAt?.toDate?.().toLocaleDateString() || "");
-
-    document.getElementById("postContent").innerHTML =
-      p.content.replace(/\n/g, "<br>");
-
-    // SEO meta update
-    document.title = p.title + " | SEO India Online";
-    document.querySelector("meta[name='description']")
-      .setAttribute("content", p.content.substring(0, 160));
-
-    // ✅ ARTICLE SCHEMA
-    const articleSchema = {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": p.title,
-      "description": p.content.substring(0, 160),
-      "author": {
-        "@type": "Person",
-        "name": p.authorEmail
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "SEO India Online",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"
-        }
-      },
-      "datePublished": p.createdAt?.toDate?.().toISOString(),
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": window.location.href
-      }
-    };
-
-    document.getElementById("articleSchema").textContent =
-      JSON.stringify(articleSchema);
-
-    // ✅ BREADCRUMB SCHEMA
-    const breadcrumbSchema = {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://hanumantsio.github.io/seoindiaonline/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Posts",
-          "item": "https://hanumantsio.github.io/seoindiaonline/posts.html"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": p.title,
-          "item": window.location.href
-        }
-      ]
-    };
-
-    document.getElementById("breadcrumbSchema").textContent =
-      JSON.stringify(breadcrumbSchema);
+  },
+  "datePublished": dateObj ? dateObj.toISOString() : "",
+  "dateModified": dateObj ? dateObj.toISOString() : "",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": window.location.href
   }
+});
 </script>
 
 </body>
