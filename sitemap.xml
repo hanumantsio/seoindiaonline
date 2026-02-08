@@ -3,16 +3,14 @@
 
   <!-- Homepage -->
   <url>
-    <loc>https://hanumantsio.github.io/seoindiaonline/</loc>
-    <lastmod>2026-02-08</lastmod>
+    <loc>https://seoindiaonline.pages.dev/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- Posts listing page -->
   <url>
-    <loc>https://hanumantsio.github.io/seoindiaonline/posts.html</loc>
-    <lastmod>2026-02-08</lastmod>
+    <loc>https://seoindiaonline.pages.dev/posts.html</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -20,9 +18,8 @@
   <!-- Individual blog post -->
   <url>
     <loc>
-      https://hanumantsio.github.io/seoindiaonline/post.html?slug=how-do-businesses-choose-seo-plans-that-actually-deliver-results-2
+      https://seoindiaonline.pages.dev/post/how-do-businesses-choose-seo-plans-that-actually-deliver-results-2
     </loc>
-    <lastmod>2026-02-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
