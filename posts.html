@@ -1,117 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>All Blog Posts | SEO India Online</title>
-  <meta name="description" content="Browse all SEO-friendly blog posts submitted by users on SEO India Online.">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 
-  <style>
-    body { font-family: Arial; background:#f4f6f8; margin:0; }
-    header { background:#0a3d62; color:#fff; padding:15px; text-align:center; }
-    .container {
-      max-width:900px;
-      margin:20px auto;
-      background:#fff;
-      padding:20px;
-    }
-    .post {
-      border-bottom:1px solid #ddd;
-      padding:15px 0;
-    }
-    .post h2 {
-      margin:0;
-      color:#0a3d62;
-    }
-    .post a {
-      text-decoration:none;
-      color:#0a3d62;
-    }
-    .meta {
-      font-size:14px;
-      color:#666;
-    }
-  </style>
+<title>All Blog Posts | SEO India Online Free Blog</title>
+
+<meta name="description" content="Browse all digital marketing blog posts published on SEO India Online Free Blog.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GT-NFP4RC7H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-TS799JPTG6', { anonymize_ip: true });
+</script>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f4f6f8;
+}
+nav{
+  background:#062f4f;
+  padding:12px;
+  text-align:center;
+}
+nav a{
+  color:#fff;
+  margin:0 12px;
+  font-weight:bold;
+  text-decoration:none;
+}
+.header{
+  background:#0a3d62;
+  color:#fff;
+  text-align:center;
+  padding:25px;
+}
+.container{
+  max-width:1000px;
+  margin:30px auto;
+  background:#fff;
+  padding:30px;
+}
+.post-item{
+  margin-bottom:25px;
+}
+.post-item a{
+  color:#0a3d62;
+  text-decoration:none;
+}
+.post-item a:hover{
+  text-decoration:underline;
+}
+footer{
+  background:#0a3d62;
+  color:#fff;
+  text-align:center;
+  padding:15px;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  <h1>Latest Blog Posts</h1>
-  <p>SEO India Online – Free Blog Posting</p>
-</header>
+<!-- NAVIGATION -->
+<nav>
+  <a href="index.html">Home</a>
+  <a href="posts.html">Posts</a>
+  <a href="submit-post.html">Submit</a>
+  <a href="login.html">Login</a>
+  <a href="register.html">Register</a>
+</nav>
 
-<div class="container" id="postsContainer">
-  <p>Loading posts...</p>
+<!-- PAGE HEADER -->
+<div class="header">
+  <h1>SEO India Online Free Blog</h1>
+  <p>Latest Digital Marketing Articles</p>
 </div>
 
-<!-- 🔥 FIREBASE + LOAD POSTS -->
+<!-- POSTS LIST -->
+<div class="container">
+  <h2>All Blog Posts</h2>
+  <div id="postList">Loading posts…</div>
+</div>
+
+<footer>
+  © 2026 SEO India Online Free Blog
+</footer>
+
+<!-- FIREBASE POSTS LOAD -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    getDocs,
-    query,
-    orderBy
-  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { db } from "./firebase.js";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
-    authDomain: "seoindiaonline-dec25.firebaseapp.com",
-    projectId: "seoindiaonline-dec25",
-    storageBucket: "seoindiaonline-dec25.firebasestorage.app",
-    messagingSenderId: "657989422876",
-    appId: "1:657989422876:web:01f521dbc140af58e774d9"
-  };
+const postList = document.getElementById("postList");
+postList.innerHTML = "";
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+// Fetch published posts (latest first)
+const q = query(
+  collection(db, "posts"),
+  orderBy("createdAt", "desc")
+);
 
-  const container = document.getElementById("postsContainer");
+const snapshot = await getDocs(q);
 
-  async function loadPosts() {
-    container.innerHTML = "";
+if (snapshot.empty) {
+  postList.innerHTML = "<p>No posts found.</p>";
+}
 
-    const q = query(
-      collection(db, "posts"),
-      orderBy("createdAt", "desc")
-    );
-
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
-      container.innerHTML = "<p>No posts found.</p>";
-      return;
-    }
-
-    snapshot.forEach(docSnap => {
-      const p = docSnap.data();
-      const div = document.createElement("div");
-      div.className = "post";
-
-      div.innerHTML = `
-        <h2>
-          <a href="post.html?id=${docSnap.id}">
-            ${p.title}
-          </a>
-        </h2>
-        <p class="meta">
-          Category: ${p.category} |
-          Author: ${p.authorEmail} |
-          Date: ${p.createdAt?.toDate?.().toLocaleDateString() || ""}
-        </p>
-        <p>
-          ${p.content.substring(0, 150)}...
-        </p>
-      `;
-
-      container.appendChild(div);
-    });
-  }
-
-  loadPosts();
+snapshot.forEach(doc => {
+  const post = doc.data();
+  postList.innerHTML += `
+    <div class="post-item">
+      <h3>
+        <a href="post.html?id=${doc.id}">
+          ${post.title}
+        </a>
+      </h3>
+    </div>
+  `;
+});
 </script>
 
 </body>
-  </html>
+</html>
