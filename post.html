@@ -4,65 +4,42 @@
 <meta charset="UTF-8">
 
 <title>Blog Article | SEO India Online Free Blog</title>
-
 <meta name="description" content="Read digital marketing articles published on SEO India Online Free Blog.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Favicon -->
+<link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
+
+<meta property="og:site_name" content="SEO India Online Free Blog">
 
 <!-- Canonical -->
 <link rel="canonical" id="canonicalLink">
 
-<!-- Google Analytics GA4 -->
+<!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=GT-NFP4RC7H"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-TS799JPTG6', { anonymize_ip: true });
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-TS799JPTG6',{anonymize_ip:true});
 </script>
 
 <!-- Article Schema -->
 <script type="application/ld+json" id="articleSchema"></script>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#f4f6f8;
-}
-nav{
-  background:#062f4f;
-  padding:12px;
-  text-align:center;
-}
-nav a{
-  color:#fff;
-  margin:0 12px;
-  font-weight:bold;
-  text-decoration:none;
-}
-.container{
-  max-width:900px;
-  margin:30px auto;
-  background:#fff;
-  padding:30px;
-}
-#meta{
-  color:#666;
-  font-size:14px;
-  margin-bottom:20px;
-}
-footer{
-  background:#0a3d62;
-  color:#fff;
-  text-align:center;
-  padding:15px;
-}
+body{margin:0;font-family:Arial;background:#f4f6f8}
+nav{background:#062f4f;padding:12px;text-align:center}
+nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
+.container{max-width:900px;margin:30px auto;background:#fff;padding:30px}
+#meta{color:#666;font-size:14px;margin-bottom:20px}
+footer{background:#0a3d62;color:#fff;text-align:center;padding:15px}
 </style>
 </head>
 
 <body>
 
-<!-- NAVIGATION -->
 <nav>
   <a href="index.html">Home</a>
   <a href="posts.html">Posts</a>
@@ -71,7 +48,6 @@ footer{
   <a href="register.html">Register</a>
 </nav>
 
-<!-- POST CONTENT -->
 <div class="container">
   <h1 id="postTitle">Loading…</h1>
   <div id="meta"></div>
@@ -79,68 +55,43 @@ footer{
 </div>
 
 <footer>
-  © 2026 SEO India Online Free Blog
+© 2026 SEO India Online Free Blog
 </footer>
 
-<!-- FIREBASE POST LOAD -->
 <script type="module">
 import { db } from "./firebase.js";
-import { doc, getDoc }
+import { doc,getDoc }
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-const postId = new URLSearchParams(window.location.search).get("id");
+const id=new URLSearchParams(location.search).get("id");
+const snap=await getDoc(doc(db,"posts",id));
 
-if (!postId) {
-  document.getElementById("postTitle").textContent = "Post not found";
-  throw new Error("Missing post ID");
-}
-
-const snap = await getDoc(doc(db, "posts", postId));
-
-if (!snap.exists()) {
-  document.getElementById("postTitle").textContent = "Post not found";
+if(!snap.exists()){
+  postTitle.textContent="Post not found";
   throw new Error("Post not found");
 }
 
-const post = snap.data();
+const p=snap.data();
+postTitle.textContent=p.title;
+postContent.innerHTML=p.content;
 
-// Title & content
-document.getElementById("postTitle").textContent = post.title;
-document.getElementById("postContent").innerHTML = post.content;
+const d=p.createdAt?.toDate();
+meta.innerHTML=`Author: ${p.authorName||"Guest"} | Date: ${d?d.toLocaleDateString():""}`;
+canonicalLink.href=location.href;
 
-// Author + Date (NO category)
-const dateObj = post.createdAt?.toDate();
-const dateStr = dateObj ? dateObj.toLocaleDateString() : "";
-
-document.getElementById("meta").innerHTML =
-  `Author: ${post.authorName || "Guest"} | Date: ${dateStr}`;
-
-// Canonical
-document.getElementById("canonicalLink").href = window.location.href;
-
-// Article Schema
-document.getElementById("articleSchema").textContent = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": post.title,
-  "author": {
-    "@type": "Person",
-    "name": post.authorName || "Guest"
+articleSchema.textContent=JSON.stringify({
+  "@context":"https://schema.org",
+  "@type":"Article",
+  "headline":p.title,
+  "author":{"@type":"Person","name":p.authorName||"Guest"},
+  "publisher":{
+    "@type":"Organization",
+    "name":"SEO India Online Free Blog",
+    "logo":{"@type":"ImageObject","url":"https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"}
   },
-  "publisher": {
-    "@type": "Organization",
-    "name": "SEO India Online Free Blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"
-    }
-  },
-  "datePublished": dateObj ? dateObj.toISOString() : "",
-  "dateModified": dateObj ? dateObj.toISOString() : "",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": window.location.href
-  }
+  "datePublished":d?d.toISOString():"",
+  "dateModified":d?d.toISOString():"",
+  "mainEntityOfPage":{"@type":"WebPage","@id":location.href}
 });
 </script>
 
