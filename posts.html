@@ -2,34 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>All Posts | SEO India Online Free Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>All Blog Posts | SEO India Online Free Blog</title>
-<meta name="description" content="Browse all digital marketing articles published on SEO India Online Free Blog.">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Favicon -->
-<link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png" type="image/png">
-<link rel="apple-touch-icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
-
-<meta property="og:site_name" content="SEO India Online Free Blog">
-
-<!-- GA4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=GT-NFP4RC7H"></script>
-<script>
-window.dataLayer=window.dataLayer||[];
-function gtag(){dataLayer.push(arguments);}
-gtag('js',new Date());
-gtag('config','G-TS799JPTG6',{anonymize_ip:true});
-</script>
+<link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
+<link rel="canonical" href="https://hanumantsio.github.io/seoindiaonline/">
 
 <style>
-body{margin:0;font-family:Arial;background:#f4f6f8}
+body{font-family:Arial;background:#f4f6f8;margin:0}
 nav{background:#062f4f;padding:12px;text-align:center}
 nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
 .container{max-width:1000px;margin:30px auto;background:#fff;padding:30px}
-.post-item{margin-bottom:25px}
-.post-item a{color:#0a3d62;text-decoration:none}
-footer{background:#0a3d62;color:#fff;text-align:center;padding:15px}
+h3 a{color:#0a3d62;text-decoration:none}
 </style>
 </head>
 
@@ -39,44 +23,45 @@ footer{background:#0a3d62;color:#fff;text-align:center;padding:15px}
   <a href="index.html">Home</a>
   <a href="posts.html">Posts</a>
   <a href="submit-post.html">Submit</a>
-  <a href="login.html">Login</a>
-  <a href="register.html">Register</a>
 </nav>
 
 <div class="container">
-  <h1>SEO India Online Free Blog – Posts</h1>
-  <div id="postList">Loading posts…</div>
+  <h1>All Blog Posts</h1>
+  <div id="posts">Loading posts…</div>
 </div>
-
-<footer>
-© 2026 SEO India Online Free Blog
-</footer>
 
 <script type="module">
 import { db } from "./firebase.js";
-import { collection,getDocs,query,orderBy }
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-const list=document.getElementById("postList");
-list.innerHTML="";
+const postsDiv = document.getElementById("posts");
 
-const q=query(collection(db,"posts"),orderBy("createdAt","desc"));
-const snap=await getDocs(q);
+const q = query(collection(db,"posts"), orderBy("createdAt","desc"));
+const snap = await getDocs(q);
 
-if(snap.empty){
-  list.innerHTML="<p>No posts found.</p>";
+postsDiv.innerHTML = "";
+
+if (snap.empty) {
+  postsDiv.innerHTML = "<p>No posts found.</p>";
 }
 
-snap.forEach(d=>{
-  const p=d.data();
-  list.innerHTML+=`
-    <div class="post-item">
-      <h3>
-        <a href="post.html?id=${d.id}">
-          ${p.title}
-        </a>
-      </h3>
-    </div>
+snap.forEach(docSnap => {
+  const p = docSnap.data();
+
+  // 🔒 SAFETY: skip posts without slug
+  if (!p.slug) return;
+
+  postsDiv.innerHTML += `
+    <h3>
+      <a href="post.html?slug=${p.slug}">
+        ${p.title}
+      </a>
+    </h3>
   `;
 });
 </script>
