@@ -3,27 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <title>Submit Post | SEO India Online Free Blog</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
 <style>
 body{font-family:Arial;background:#f4f6f8;margin:0}
 .container{max-width:1200px;margin:30px auto;background:#fff;padding:20px}
 .editor-wrap{display:flex;gap:20px}
-textarea{width:100%;height:400px;font-family:monospace}
+textarea{width:50%;height:400px;font-family:monospace}
 .preview{width:50%;border:1px solid #ccc;padding:15px;background:#fafafa}
 button{margin-top:15px;padding:10px 20px;background:#0a3d62;color:#fff;border:none}
 </style>
 </head>
-
 <body>
+
 <div class="container">
 <h1>Submit Blog Post</h1>
 
 <input id="title" placeholder="Post Title" style="width:100%;padding:10px;margin-bottom:10px">
 
 <div class="editor-wrap">
-  <textarea id="content" placeholder="Write content (HTML / Markdown / BBCode)"></textarea>
-  <div class="preview" id="preview">Live preview…</div>
+<textarea id="content" placeholder="Write content (HTML / Markdown / BBCode)"></textarea>
+<div class="preview" id="preview">Live preview…</div>
 </div>
 
 <button id="publish">Publish</button>
@@ -32,66 +32,52 @@ button{margin-top:15px;padding:10px 20px;background:#0a3d62;color:#fff;border:no
 <script type="module">
 import { auth, db } from "./firebase.js";
 import {
-  addDoc, collection, serverTimestamp,
-  query, where, getDocs
+ addDoc, collection, serverTimestamp,
+ query, where, getDocs
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-/* SLUG */
-function slugify(text){
-  return text.toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g,"-")
-    .replace(/(^-|-$)/g,"");
-}
-
+/* slug */
+const slugify=t=>t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
 async function uniqueSlug(base){
-  let slug=base, i=1;
-  while(true){
-    const q=query(collection(db,"posts"),where("slug","==",slug));
-    const s=await getDocs(q);
-    if(s.empty) return slug;
-    slug=`${base}-${++i}`;
-  }
+ let s=base,i=1;
+ while(true){
+  const q=query(collection(db,"posts"),where("slug","==",s));
+  if((await getDocs(q)).empty) return s;
+  s=`${base}-${++i}`;
+ }
 }
 
-/* PARSER */
-function parse(text){
-  let h=text;
-  h=h.replace(/^## (.*$)/gim,"<h2>$1</h2>");
-  h=h.replace(/^### (.*$)/gim,"<h3>$1</h3>");
-  h=h.replace(/\*\*(.*?)\*\*/gim,"<strong>$1</strong>");
-  h=h.replace(/\*(.*?)\*/gim,"<em>$1</em>");
-  h=h.replace(/\[b\](.*?)\[\/b\]/gim,"<strong>$1</strong>");
-  h=h.replace(/\[url=(.*?)\](.*?)\[\/url\]/gim,"<a href='$1'>$2</a>");
-  h=h.replace(/^\- (.*$)/gim,"<li>$1</li>");
-  h=h.replace(/(<li>.*<\/li>)/gims,"<ul>$1</ul>");
-  h=h.replace(/\n/g,"<br>");
-  return h;
+/* parser */
+function parse(t){
+ return t
+ .replace(/^## (.*)$/gim,"<h2>$1</h2>")
+ .replace(/^### (.*)$/gim,"<h3>$1</h3>")
+ .replace(/\*\*(.*?)\*\*/gim,"<strong>$1</strong>")
+ .replace(/\*(.*?)\*/gim,"<em>$1</em>")
+ .replace(/\[b\](.*?)\[\/b\]/gim,"<strong>$1</strong>")
+ .replace(/\[url=(.*?)\](.*?)\[\/url\]/gim,"<a href='$1'>$2</a>")
+ .replace(/^\- (.*)$/gim,"<li>$1</li>")
+ .replace(/(<li>.*<\/li>)/gims,"<ul>$1</ul>")
+ .replace(/\n/g,"<br>");
 }
 
-/* LIVE PREVIEW */
+/* preview */
 content.oninput=()=>preview.innerHTML=parse(content.value);
 
-/* PUBLISH */
+/* publish */
 publish.onclick=async()=>{
-  const title=titleInput.value=title.value.trim();
-  if(!title||content.value.length<200){
-    alert("Title required & min 200 words");
-    return;
-  }
-
-  const slug=await uniqueSlug(slugify(title));
-  await addDoc(collection(db,"posts"),{
-    title,
-    slug,
-    content:parse(content.value),
-    authorName:auth.currentUser.displayName,
-    createdAt:serverTimestamp(),
-    status:"published"
-  });
-
-  alert("Published");
-  location.href="index.html";
+ if(content.value.length<200) return alert("Minimum 200 words required");
+ const slug=await uniqueSlug(slugify(title.value));
+ await addDoc(collection(db,"posts"),{
+  title:title.value,
+  slug,
+  content:parse(content.value),
+  authorName:auth.currentUser.displayName,
+  createdAt:serverTimestamp(),
+  status:"published"
+ });
+ alert("Published");
+ location.href="index.html";
 };
 </script>
 </body>
