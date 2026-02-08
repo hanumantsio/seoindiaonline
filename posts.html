@@ -5,66 +5,189 @@
 <title>All Posts | SEO India Online Free Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<meta name="description" content="Browse all SEO and digital marketing articles published on SEO India Online Free Blog.">
+<meta name="robots" content="index,follow">
+
+<link rel="canonical" href="https://seoindiaonline.pages.dev/posts.html">
+
 <link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
-<link rel="canonical" href="https://hanumantsio.github.io/seoindiaonline/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="All Posts | SEO India Online Free Blog">
+<meta property="og:description" content="Browse SEO and digital marketing articles published on SEO India Online Free Blog.">
+<meta property="og:url" content="https://seoindiaonline.pages.dev/posts.html">
+<meta property="og:image" content="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
+
+<!-- Breadcrumb Schema -->
+<script type="application/ld+json" id="breadcrumbSchema"></script>
+
+<!-- ItemList / Pagination Schema -->
+<script type="application/ld+json" id="listSchema"></script>
 
 <style>
-body{font-family:Arial;background:#f4f6f8;margin:0}
-nav{background:#062f4f;padding:12px;text-align:center}
-nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
-.container{max-width:1000px;margin:30px auto;background:#fff;padding:30px}
-h3 a{color:#0a3d62;text-decoration:none}
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  margin:0;
+  background:#f4f6f8;
+  color:#222;
+}
+nav{
+  background:#062f4f;
+  padding:14px 20px;
+}
+nav a{
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+}
+.container{
+  max-width:1100px;
+  margin:30px auto;
+  padding:0 15px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+}
+.card a{
+  color:#0a3d62;
+  font-weight:600;
+  text-decoration:none;
+}
+.pagination{
+  text-align:center;
+  margin:30px 0;
+}
+.pagination a{
+  margin:0 12px;
+  text-decoration:none;
+  font-weight:600;
+  color:#0a3d62;
+}
+footer{
+  text-align:center;
+  padding:20px;
+  font-size:14px;
+  color:#666;
+}
 </style>
 </head>
 
 <body>
 
 <nav>
-  <a href="index.html">Home</a>
-  <a href="posts.html">Posts</a>
-  <a href="submit-post.html">Submit</a>
+  <a href="/">Home</a>
 </nav>
 
-<div class="container">
-  <h1>All Blog Posts</h1>
-  <div id="posts">Loading posts…</div>
-</div>
+<main class="container">
+  <h1>All Posts</h1>
 
+  <div id="posts" class="grid">Loading posts…</div>
+
+  <div class="pagination" id="pagination"></div>
+</main>
+
+<footer>
+  © 2026 SEO India Online Free Blog
+</footer>
+
+<!-- POSTS + PAGINATION LOGIC -->
 <script type="module">
 import { db } from "./firebase.js";
 import {
-  collection,
-  getDocs,
-  query,
-  orderBy
+  collection, query, orderBy, limit, startAfter, getDocs
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-const postsDiv = document.getElementById("posts");
+const POSTS_PER_PAGE = 20;
+const params = new URLSearchParams(location.search);
+const page = parseInt(params.get("page") || "1");
 
-const q = query(collection(db,"posts"), orderBy("createdAt","desc"));
-const snap = await getDocs(q);
+let lastDoc = null;
 
-postsDiv.innerHTML = "";
-
-if (snap.empty) {
-  postsDiv.innerHTML = "<p>No posts found.</p>";
+/* Pagination cursor */
+if(page > 1){
+  const prevQ = query(
+    collection(db,"posts"),
+    orderBy("createdAt","desc"),
+    limit((page - 1) * POSTS_PER_PAGE)
+  );
+  const prevSnap = await getDocs(prevQ);
+  lastDoc = prevSnap.docs[prevSnap.docs.length - 1];
 }
 
-snap.forEach(docSnap => {
-  const p = docSnap.data();
+const q = lastDoc
+  ? query(collection(db,"posts"), orderBy("createdAt","desc"), startAfter(lastDoc), limit(POSTS_PER_PAGE))
+  : query(collection(db,"posts"), orderBy("createdAt","desc"), limit(POSTS_PER_PAGE));
 
-  // 🔒 SAFETY: skip posts without slug
-  if (!p.slug) return;
+const snap = await getDocs(q);
 
-  postsDiv.innerHTML += `
-    <h3>
-      <a href="post.html?slug=${p.slug}">
-        ${p.title}
-      </a>
-    </h3>
+posts.innerHTML = "";
+
+const itemList = [];
+
+snap.forEach((d, index)=>{
+  const p = d.data();
+  if(!p.slug) return;
+
+  const cleanURL = location.origin + "/post/" + p.slug;
+
+  posts.innerHTML += `
+    <div class="card">
+      <a href="${cleanURL}">${p.title}</a>
+    </div>
   `;
+
+  itemList.push({
+    "@type":"ListItem",
+    "position": index + 1,
+    "url": cleanURL,
+    "name": p.title
+  });
+});
+
+/* Pagination links */
+pagination.innerHTML = `
+  ${page > 1 ? `<a href="?page=${page - 1}">← Previous</a>` : ""}
+  ${snap.size === POSTS_PER_PAGE ? `<a href="?page=${page + 1}">Next →</a>` : ""}
+`;
+
+/* Breadcrumb schema */
+breadcrumbSchema.textContent = JSON.stringify({
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {
+      "@type":"ListItem",
+      "position":1,
+      "name":"Home",
+      "item": location.origin + "/"
+    },
+    {
+      "@type":"ListItem",
+      "position":2,
+      "name":"Posts",
+      "item": location.origin + "/posts.html"
+    }
+  ]
+});
+
+/* ItemList (Pagination-aware) schema */
+listSchema.textContent = JSON.stringify({
+  "@context":"https://schema.org",
+  "@type":"ItemList",
+  "itemListOrder":"https://schema.org/ItemListOrderDescending",
+  "numberOfItems": itemList.length,
+  "itemListElement": itemList
 });
 </script>
 
 </body>
-</html>
+                                               </html>
