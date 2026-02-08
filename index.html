@@ -2,188 +2,64 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<title>SEO India Online Free Blog – Latest Digital Marketing Articles</title>
-<meta name="description" content="SEO India Online Free Blog publishes free digital marketing and SEO articles. Managed by SEO Executive Hanumant Kumar from SEO India Online.">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Canonical -->
-<link rel="canonical" id="canonicalLink">
-
-<!-- Favicon -->
-<link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png" type="image/png">
-<link rel="apple-touch-icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
-<meta name="theme-color" content="#0a3d62">
-
-<!-- Site identity -->
-<meta property="og:site_name" content="SEO India Online Free Blog">
-<meta name="application-name" content="SEO India Online Free Blog">
-
-<!-- Verification -->
-<meta name="google-site-verification" content="Dc7Qh7_59JPa3z0dn_QmMgWXft0UVMyMlKksWO44NdQ">
-<meta name="msvalidate.01" content="439FAFB45A1A046AD53883E98A53FED0">
-
-<!-- Organization Schema -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "SEO India Online Free Blog",
-  "url": "https://hanumantsio.github.io/seoindiaonline/",
-  "logo": "https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png",
-  "sameAs": ["https://seoindiaonline.com"]
-}
-</script>
-
-<!-- Author (Homepage Editor) Schema -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Hanumant Kumar",
-  "jobTitle": "SEO Executive",
-  "worksFor": {
-    "@type": "Organization",
-    "name": "SEO India Online",
-    "url": "https://seoindiaonline.com"
-  },
-  "email": "mailto:hanumant.seoindiaonline@gmail.com",
-  "url": "https://seoindiaonline.com"
-}
-</script>
-
-<!-- GA4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=GT-NFP4RC7H"></script>
-<script>
-window.dataLayer=window.dataLayer||[];
-function gtag(){dataLayer.push(arguments);}
-gtag('js',new Date());
-gtag('config','G-TS799JPTG6',{anonymize_ip:true});
-</script>
-
-<style>
-body{margin:0;font-family:Arial;background:#f4f6f8}
-header{background:#0a3d62;color:#fff;text-align:center;padding:30px}
-header img{width:90px}
-nav{background:#062f4f;padding:12px;text-align:center}
-nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
-.container{max-width:1000px;margin:30px auto;background:#fff;padding:30px}
-.author-box{
-  border-left:5px solid #0a3d62;
-  padding:20px;
-  background:#ffffff;
-  margin-bottom:30px
-}
-.post-item{margin-bottom:25px}
-.post-item a{color:#0a3d62;text-decoration:none}
-.pagination{text-align:center;margin-top:30px}
-.pagination a,.pagination span{
-  margin:0 6px;
-  padding:8px 14px;
-  border:1px solid #ccc;
-  text-decoration:none;
-  color:#062f4f
-}
-.pagination span{
-  background:#062f4f;
-  color:#fff
-}
-footer{background:#0a3d62;color:#fff;text-align:center;padding:15px}
-</style>
+<title>SEO India Online Free Blog</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
-
 <body>
-
-<header>
-  <img src="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png" alt="SEO India Online Free Blog">
-  <h1>SEO India Online Free Blog</h1>
-  <p>Latest Digital Marketing Articles</p>
-</header>
 
 <nav>
   <a href="index.html">Home</a>
   <a href="posts.html">Posts</a>
-  <a href="submit-post.html">Submit</a>
-  <a href="login.html">Login</a>
-  <a href="register.html">Register</a>
+  <a href="submit-post.html" id="submitLink" style="display:none">Submit</a>
+  <span id="authLinks">
+    <a href="login.html" id="loginLink">Login</a>
+    <a href="register.html" id="registerLink">Register</a>
+  </span>
+  <button id="logoutBtn" style="display:none">Logout</button>
 </nav>
 
-<div class="container">
+<h1>SEO India Online Free Blog</h1>
+<p>
+Author: <strong>Hanumant Kumar</strong><br>
+SEO Executive at <a href="https://seoindiaonline.com">SEO India Online</a>
+</p>
 
-  <!-- HOMEPAGE AUTHOR (ONLY HERE) -->
-  <section class="author-box">
-    <h2>About the Editor</h2>
-    <p>
-      <strong>Hanumant Kumar</strong><br>
-      SEO Executive at
-      <a href="https://seoindiaonline.com" target="_blank" rel="noopener">
-        SEO India Online
-      </a><br>
-      Email:
-      <a href="mailto:hanumant.seoindiaonline@gmail.com">
-        hanumant.seoindiaonline@gmail.com
-      </a>
-    </p>
-  </section>
-
-  <h2>Latest Posts</h2>
-  <div id="postList">Loading…</div>
-  <div class="pagination" id="pagination"></div>
-
-</div>
-
-<footer>
-© 2026 SEO India Online Free Blog
-</footer>
+<div id="posts">Loading posts…</div>
 
 <script type="module">
 import { db } from "./firebase.js";
-import { collection,getDocs,query,orderBy }
+import { collection, getDocs, query, orderBy }
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
-const PAGE_SIZE = 10;
-const page = parseInt(new URLSearchParams(location.search).get("page")) || 1;
-
-// Canonical handling
-const canonical = document.getElementById("canonicalLink");
-canonical.href =
-  page === 1
-    ? "https://hanumantsio.github.io/seoindiaonline/"
-    : `https://hanumantsio.github.io/seoindiaonline/index.html?page=${page}`;
-
-const list = document.getElementById("postList");
-const pagination = document.getElementById("pagination");
 
 const q = query(collection(db,"posts"), orderBy("createdAt","desc"));
 const snap = await getDocs(q);
 
-const docs = snap.docs;
-const totalPages = Math.ceil(docs.length / PAGE_SIZE);
+posts.innerHTML = "";
+snap.forEach(d=>{
+ const p=d.data();
+ if(!p.slug) return;
+ posts.innerHTML += `<h3><a href="post.html?slug=${p.slug}">${p.title}</a></h3>`;
+});
+</script>
 
-list.innerHTML = "";
+<!-- AUTH UI -->
+<script type="module">
+import { auth } from "./firebase.js";
+import { onAuthStateChanged, signOut }
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-docs
-  .slice((page-1)*PAGE_SIZE, page*PAGE_SIZE)
-  .forEach(d=>{
-    const p=d.data();
-    list.innerHTML+=`
-      <div class="post-item">
-        <h3>
-          <a href="post.html?slug=${p.slug}">
-            ${p.title}
-          </a>
-        </h3>
-      </div>`;
-  });
+onAuthStateChanged(auth,user=>{
+ logoutBtn.style.display=user?"inline":"none";
+ submitLink.style.display=user?"inline":"none";
+ loginLink.style.display=user?"none":"inline";
+ registerLink.style.display=user?"none":"inline";
+});
 
-pagination.innerHTML="";
-for(let i=1;i<=totalPages;i++){
-  pagination.innerHTML +=
-    i===page
-      ? `<span>${i}</span>`
-      : `<a href="index.html?page=${i}">${i}</a>`;
-}
+logoutBtn.onclick=async()=>{
+ await signOut(auth);
+ location.href="index.html";
+};
 </script>
 
 </body>
-  </html>
+</html>
