@@ -1,7 +1,5 @@
 User-agent: *
 Allow: /
 
-Disallow: /admin.html
-Disallow: /submit-post.html
-
+# Sitemap
 Sitemap: https://hanumantsio.github.io/seoindiaonline/sitemap.xml
