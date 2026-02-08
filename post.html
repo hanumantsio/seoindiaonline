@@ -2,98 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<title>Blog Article | SEO India Online Free Blog</title>
-<meta name="description" content="Read digital marketing articles published on SEO India Online Free Blog.">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Favicon -->
-<link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png" type="image/png">
-<link rel="apple-touch-icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
-
-<meta property="og:site_name" content="SEO India Online Free Blog">
-
-<!-- Canonical -->
+<title id="titleTag">Post</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
 <link rel="canonical" id="canonicalLink">
-
-<!-- GA4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=GT-NFP4RC7H"></script>
-<script>
-window.dataLayer=window.dataLayer||[];
-function gtag(){dataLayer.push(arguments);}
-gtag('js',new Date());
-gtag('config','G-TS799JPTG6',{anonymize_ip:true});
-</script>
-
-<!-- Article Schema -->
 <script type="application/ld+json" id="articleSchema"></script>
-
-<style>
-body{margin:0;font-family:Arial;background:#f4f6f8}
-nav{background:#062f4f;padding:12px;text-align:center}
-nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
-.container{max-width:900px;margin:30px auto;background:#fff;padding:30px}
-#meta{color:#666;font-size:14px;margin-bottom:20px}
-footer{background:#0a3d62;color:#fff;text-align:center;padding:15px}
-</style>
 </head>
 
 <body>
-
-<nav>
-  <a href="index.html">Home</a>
-  <a href="posts.html">Posts</a>
-  <a href="submit-post.html">Submit</a>
-  <a href="login.html">Login</a>
-  <a href="register.html">Register</a>
-</nav>
-
-<div class="container">
-  <h1 id="postTitle">Loading…</h1>
-  <div id="meta"></div>
-  <div id="postContent"></div>
-</div>
-
-<footer>
-© 2026 SEO India Online Free Blog
-</footer>
+<h1 id="postTitle"></h1>
+<div id="meta"></div>
+<div id="postContent"></div>
 
 <script type="module">
 import { db } from "./firebase.js";
-import { doc,getDoc }
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import {
+  collection, query, where, getDocs
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-const id=new URLSearchParams(location.search).get("id");
-const snap=await getDoc(doc(db,"posts",id));
+const slug=new URLSearchParams(location.search).get("slug");
+if(!slug){document.body.innerHTML="Invalid post";throw "";}
 
-if(!snap.exists()){
-  postTitle.textContent="Post not found";
-  throw new Error("Post not found");
-}
+const q=query(collection(db,"posts"),where("slug","==",slug));
+const s=await getDocs(q);
+if(s.empty){document.body.innerHTML="Post not found";throw "";}
 
-const p=snap.data();
+const p=s.docs[0].data();
+const date=p.createdAt?.toDate();
+
 postTitle.textContent=p.title;
 postContent.innerHTML=p.content;
+meta.textContent=`Author: ${p.authorName} | Date: ${date?.toLocaleDateString()}`;
 
-const d=p.createdAt?.toDate();
-meta.innerHTML=`Author: ${p.authorName||"Guest"} | Date: ${d?d.toLocaleDateString():""}`;
-canonicalLink.href=location.href;
+titleTag.textContent=`${p.title} | SEO India Online Free Blog`;
+canonicalLink.href=`https://hanumantsio.github.io/seoindiaonline/post/${p.slug}`;
 
+/* Article Schema */
 articleSchema.textContent=JSON.stringify({
-  "@context":"https://schema.org",
-  "@type":"Article",
-  "headline":p.title,
-  "author":{"@type":"Person","name":p.authorName||"Guest"},
-  "publisher":{
-    "@type":"Organization",
-    "name":"SEO India Online Free Blog",
-    "logo":{"@type":"ImageObject","url":"https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"}
-  },
-  "datePublished":d?d.toISOString():"",
-  "dateModified":d?d.toISOString():"",
-  "mainEntityOfPage":{"@type":"WebPage","@id":location.href}
+ "@context":"https://schema.org",
+ "@type":"Article",
+ "mainEntityOfPage":{"@type":"WebPage","@id":canonicalLink.href},
+ "headline":p.title,
+ "description":p.content.replace(/<[^>]+>/g,"").substring(0,160),
+ "author":{"@type":"Person","name":p.authorName},
+ "publisher":{
+   "@type":"Organization",
+   "name":"SEO India Online Free Blog",
+   "logo":{"@type":"ImageObject","url":"https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"}
+ },
+ "datePublished":date?.toISOString(),
+ "dateModified":date?.toISOString()
 });
 </script>
-
 </body>
 </html>
