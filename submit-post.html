@@ -2,204 +2,195 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Submit Blog Post | SEO India Online</title>
-<meta name="description" content="Submit SEO-friendly blog posts. Markdown, HTML and BBCode supported. All posts are indexed.">
+
+<title>Submit Post | SEO India Online Free Blog</title>
+
+<meta name="description" content="Submit your digital marketing article on SEO India Online Free Blog. Free blog posting platform.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Quill Editor -->
-<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-
-<!-- XSS Protection -->
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GT-NFP4RC7H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-TS799JPTG6', { anonymize_ip: true });
+</script>
 
 <style>
-body { font-family: Arial; background:#f4f6f8; margin:0; }
-header { background:#0a3d62; color:#fff; padding:15px; text-align:center; }
-
-nav {
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f4f6f8;
+}
+nav{
   background:#062f4f;
-  padding:10px;
+  padding:12px;
   text-align:center;
 }
-nav a {
+nav a{
   color:#fff;
-  margin:0 10px;
-  text-decoration:none;
+  margin:0 12px;
   font-weight:bold;
+  text-decoration:none;
 }
-
-.container {
-  max-width:1000px;
-  margin:20px auto;
+.header{
+  background:#0a3d62;
+  color:#fff;
+  text-align:center;
+  padding:25px;
+}
+.container{
+  max-width:900px;
+  margin:30px auto;
   background:#fff;
-  padding:20px;
+  padding:30px;
 }
-
-input, button {
+input, textarea, button{
   width:100%;
   padding:12px;
-  margin:10px 0;
-  font-size:15px;
+  margin-bottom:15px;
+  font-size:16px;
 }
-
-button {
+textarea{
+  min-height:260px;
+}
+button{
   background:#0a3d62;
   color:#fff;
   border:none;
   cursor:pointer;
 }
-
-#editor { height:280px; }
-
-.rules, .formats {
-  background:#eef6ff;
-  padding:15px;
-  border-left:4px solid #0a3d62;
-  font-size:14px;
-  margin-bottom:20px;
+button:hover{
+  background:#062f4f;
 }
-
-#userInfo {
-  color:green;
+.note{
   font-size:14px;
+  color:#555;
+}
+.error{
+  color:red;
+  margin-bottom:15px;
+}
+footer{
+  background:#0a3d62;
+  color:#fff;
+  text-align:center;
+  padding:15px;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>Submit Blog Post</h1>
-  <p>SEO Friendly • Indexed • DoFollow Links</p>
-</header>
-
-<!-- ✅ NAVIGATION -->
+<!-- NAVIGATION -->
 <nav>
   <a href="index.html">Home</a>
   <a href="posts.html">Posts</a>
   <a href="submit-post.html">Submit</a>
-  <a href="#" id="logoutBtn">Logout</a>
+  <a href="login.html">Login</a>
+  <a href="register.html">Register</a>
 </nav>
 
+<!-- HEADER -->
+<div class="header">
+  <h1>SEO India Online Free Blog</h1>
+  <p>Submit Your Digital Marketing Article</p>
+</div>
+
+<!-- FORM -->
 <div class="container">
 
-<p id="userInfo"></p>
+  <h2>Submit New Post</h2>
 
-<div class="rules">
-<strong>Submission Rules:</strong>
-<ul>
-<li>Minimum <b>200 words</b></li>
-<li>Original, human-written content only</li>
-<li>SEO-friendly anchors allowed (DoFollow)</li>
-<li>No adult, casino, betting, or spam content</li>
-<li>Excessive links may lead to deletion</li>
-<li>All posts are public and indexed by search engines</li>
-</ul>
-</div>
+  <div class="note">
+    ✔ Minimum 200 words<br>
+    ✔ Original content only<br>
+    ✔ HTML, Markdown & BBCode supported<br>
+    ✔ SEO-friendly links allowed
+  </div>
 
-<div class="formats">
-<strong>Formatting Supported:</strong>
-<ul>
-<li><b>Markdown</b> (headings, bold, links)</li>
-<li><b>HTML</b> (p, h1–h3, strong, a, ul, li)</li>
-<li><b>BBCode</b> ([b], [i], [u], [url])</li>
-</ul>
-<p>⚠️ Scripts and unsafe tags are automatically removed for security.</p>
-</div>
+  <div id="errorMsg" class="error"></div>
 
-<input type="text" id="title" placeholder="Post Title" required>
+  <form id="postForm">
+    <input type="text" id="title" placeholder="Post Title" required>
 
-<!-- ✍️ Rich Text Editor -->
-<div id="editor"></div>
+    <textarea id="content" placeholder="Write your article here (HTML / Markdown / BBCode supported)" required></textarea>
 
-<label>
-  <input type="checkbox" required> I agree to the submission rules
-</label>
-
-<button id="submitBtn">Submit Post</button>
+    <button type="submit">Publish Post</button>
+  </form>
 
 </div>
 
-<!-- 🔥 FIREBASE + SEO SAFE LOGIC -->
+<footer>
+  © 2026 SEO India Online Free Blog
+</footer>
+
+<!-- FIREBASE POST SUBMISSION -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut }
-  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp }
-  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { auth, db } from "./firebase.js";
+import {
+  addDoc,
+  collection,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { onAuthStateChanged }
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
-  authDomain: "seoindiaonline-dec25.firebaseapp.com",
-  projectId: "seoindiaonline-dec25",
-  storageBucket: "seoindiaonline-dec25.firebasestorage.app",
-  messagingSenderId: "657989422876",
-  appId: "1:657989422876:web:01f521dbc140af58e774d9"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const form = document.getElementById("postForm");
+const errorMsg = document.getElementById("errorMsg");
 
 let currentUser = null;
 
-// 🔐 Protect page
+// Auth check
 onAuthStateChanged(auth, user => {
-  if (!user) location.replace("login.html");
-  currentUser = user;
-  document.getElementById("userInfo").textContent =
-    "Logged in as: " + user.email;
-});
-
-// 🚪 Logout
-document.getElementById("logoutBtn").onclick = async (e) => {
-  e.preventDefault();
-  await signOut(auth);
-  location.href = "index.html";
-};
-
-// ✍️ Quill Editor
-const quill = new Quill('#editor', {
-  theme: 'snow',
-  modules: {
-    toolbar: [
-      ['bold','italic','underline'],
-      [{'header':[1,2,3,false]}],
-      ['link','blockquote','code-block'],
-      [{'list':'ordered'},{'list':'bullet'}]
-    ]
+  if (!user) {
+    location.href = "login.html";
+  } else {
+    currentUser = user;
   }
 });
 
-// 📝 Submit Post
-document.getElementById("submitBtn").onclick = async () => {
-  const title = document.getElementById("title").value.trim();
-  const rawHTML = quill.root.innerHTML;
-  const wordCount = rawHTML.replace(/<[^>]+>/g,"").split(/\s+/).length;
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  errorMsg.textContent = "";
 
-  if (wordCount < 200) {
-    alert("Minimum 200 words required.");
+  const title = document.getElementById("title").value.trim();
+  const content = document.getElementById("content").value.trim();
+
+  if (!title || !content) {
+    errorMsg.textContent = "All fields are required.";
     return;
   }
 
-  // ✅ SEO-SAFE SANITIZATION (ANCHORS KEPT, DOFOLLOW)
-  const cleanHTML = DOMPurify.sanitize(rawHTML,{
-    ALLOWED_TAGS: ['a','p','br','strong','em','ul','ol','li','h1','h2','h3','blockquote','code'],
-    ALLOWED_ATTR: ['href','target','title']
-  });
+  const wordCount = content.split(/\s+/).length;
+  if (wordCount < 200) {
+    errorMsg.textContent = "Post must be at least 200 words.";
+    return;
+  }
 
-  await addDoc(collection(db,"posts"),{
-    title,
-    content: cleanHTML,
-    authorEmail: currentUser.email,
-    createdAt: serverTimestamp(),
-    status: "published"
-  });
+  try {
+    await addDoc(collection(db, "posts"), {
+      title: title,
+      content: content,
+      authorName: currentUser.displayName || "Guest",
+      createdAt: serverTimestamp(),
+      status: "published"
+    });
 
-  alert("Post submitted successfully!");
-  location.reload();
-};
+    // GA4 event
+    gtag('event', 'post_submitted', {
+      event_category: 'content',
+      event_label: title
+    });
+
+    alert("Post published successfully!");
+    location.href = "posts.html";
+
+  } catch (err) {
+    errorMsg.textContent = err.message;
+  }
+});
 </script>
 
 </body>
