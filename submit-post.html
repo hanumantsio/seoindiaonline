@@ -14,16 +14,16 @@ textarea{width:50%;height:400px;font-family:monospace}
 button{margin-top:15px;padding:10px 20px;background:#0a3d62;color:#fff;border:none}
 </style>
 </head>
-<body>
 
+<body>
 <div class="container">
 <h1>Submit Blog Post</h1>
 
 <input id="title" placeholder="Post Title" style="width:100%;padding:10px;margin-bottom:10px">
 
 <div class="editor-wrap">
-<textarea id="content" placeholder="Write content (HTML / Markdown / BBCode)"></textarea>
-<div class="preview" id="preview">Live preview…</div>
+  <textarea id="content" placeholder="HTML / Markdown / BBCode supported"></textarea>
+  <div class="preview" id="preview">Live preview…</div>
 </div>
 
 <button id="publish">Publish</button>
@@ -32,11 +32,11 @@ button{margin-top:15px;padding:10px 20px;background:#0a3d62;color:#fff;border:no
 <script type="module">
 import { auth, db } from "./firebase.js";
 import {
- addDoc, collection, serverTimestamp,
- query, where, getDocs
+  addDoc, collection, serverTimestamp,
+  query, where, getDocs
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-/* slug */
+/* slug helpers */
 const slugify=t=>t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
 async function uniqueSlug(base){
  let s=base,i=1;
@@ -61,22 +61,25 @@ function parse(t){
  .replace(/\n/g,"<br>");
 }
 
-/* preview */
+/* live preview */
 content.oninput=()=>preview.innerHTML=parse(content.value);
 
 /* publish */
 publish.onclick=async()=>{
  if(content.value.length<200) return alert("Minimum 200 words required");
+
  const slug=await uniqueSlug(slugify(title.value));
+
  await addDoc(collection(db,"posts"),{
   title:title.value,
   slug,
   content:parse(content.value),
-  authorName:auth.currentUser.displayName,
+  authorName:auth.currentUser.displayName, // FROM REGISTRATION
   createdAt:serverTimestamp(),
   status:"published"
  });
- alert("Published");
+
+ alert("Post published");
  location.href="index.html";
 };
 </script>
