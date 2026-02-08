@@ -2,57 +2,116 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title id="titleTag">Post</title>
+
+<title id="titleTag">Post | SEO India Online Free Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
 <link rel="canonical" id="canonicalLink">
+
+<meta name="robots" content="index,follow">
+
+<!-- Article Schema -->
 <script type="application/ld+json" id="articleSchema"></script>
+
+<style>
+body{font-family:Arial;background:#f4f6f8;margin:0}
+nav{background:#062f4f;padding:12px;text-align:center}
+nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
+.container{max-width:1000px;margin:30px auto;background:#fff;padding:30px}
+#meta{color:#555;font-size:14px;margin-bottom:20px}
+#postContent a{color:#0a3d62}
+footer{text-align:center;padding:20px;color:#666}
+</style>
 </head>
 
 <body>
-<h1 id="postTitle"></h1>
-<div id="meta"></div>
-<div id="postContent"></div>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="posts.html">Posts</a>
+  <a href="submit-post.html">Submit</a>
+</nav>
+
+<div class="container">
+  <h1 id="postTitle">Loading…</h1>
+  <div id="meta"></div>
+  <div id="postContent"></div>
+</div>
+
+<footer>
+  © 2026 SEO India Online Free Blog ·
+  <a href="external-link-policy.html">External Link Policy</a>
+</footer>
 
 <script type="module">
 import { db } from "./firebase.js";
 import {
-  collection, query, where, getDocs
+  collection,
+  query,
+  where,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-const slug=new URLSearchParams(location.search).get("slug");
-if(!slug){document.body.innerHTML="Invalid post";throw "";}
+/* -------- LOAD BY SLUG -------- */
+const slug = new URLSearchParams(location.search).get("slug");
 
-const q=query(collection(db,"posts"),where("slug","==",slug));
-const s=await getDocs(q);
-if(s.empty){document.body.innerHTML="Post not found";throw "";}
+if (!slug) {
+  document.body.innerHTML = "Invalid post URL";
+  throw "";
+}
 
-const p=s.docs[0].data();
-const date=p.createdAt?.toDate();
+const q = query(collection(db,"posts"), where("slug","==",slug));
+const snap = await getDocs(q);
 
-postTitle.textContent=p.title;
-postContent.innerHTML=p.content;
-meta.textContent=`Author: ${p.authorName} | Date: ${date?.toLocaleDateString()}`;
+if (snap.empty) {
+  document.body.innerHTML = "Post not found";
+  throw "";
+}
 
-titleTag.textContent=`${p.title} | SEO India Online Free Blog`;
-canonicalLink.href=`https://hanumantsio.github.io/seoindiaonline/post/${p.slug}`;
+const p = snap.docs[0].data();
+const dateObj = p.createdAt?.toDate();
 
-/* Article Schema */
-articleSchema.textContent=JSON.stringify({
- "@context":"https://schema.org",
- "@type":"Article",
- "mainEntityOfPage":{"@type":"WebPage","@id":canonicalLink.href},
- "headline":p.title,
- "description":p.content.replace(/<[^>]+>/g,"").substring(0,160),
- "author":{"@type":"Person","name":p.authorName},
- "publisher":{
-   "@type":"Organization",
-   "name":"SEO India Online Free Blog",
-   "logo":{"@type":"ImageObject","url":"https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"}
- },
- "datePublished":date?.toISOString(),
- "dateModified":date?.toISOString()
+/* -------- RENDER CONTENT -------- */
+document.getElementById("postTitle").textContent = p.title;
+document.getElementById("postContent").innerHTML = p.content;
+
+document.getElementById("meta").textContent =
+  `Author: ${p.authorName} | Date: ${dateObj?.toLocaleDateString()}`;
+
+document.getElementById("titleTag").textContent =
+  `${p.title} | SEO India Online Free Blog`;
+
+const canonicalURL =
+  `https://hanumantsio.github.io/seoindiaonline/post/${p.slug}`;
+document.getElementById("canonicalLink").href = canonicalURL;
+
+/* -------- ARTICLE SCHEMA -------- */
+document.getElementById("articleSchema").textContent = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalURL
+  },
+  "headline": p.title,
+  "description": p.content.replace(/<[^>]+>/g,"").substring(0,160),
+  "author": {
+    "@type": "Person",
+    "name": p.authorName
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SEO India Online Free Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"
+    }
+  },
+  "datePublished": dateObj?.toISOString(),
+  "dateModified": dateObj?.toISOString()
 });
 </script>
+
 </body>
 </html>
