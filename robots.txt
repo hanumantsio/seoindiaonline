@@ -1,5 +1,13 @@
 User-agent: *
 Allow: /
 
+# Block non-public / utility pages
+Disallow: /login.html
+Disallow: /register.html
+Disallow: /submit-post.html
+
+# Allow clean post URLs
+Allow: /post/
+
 # Sitemap
-Sitemap: https://hanumantsio.github.io/seoindiaonline/sitemap.xml
+Sitemap: https://seoindiaonline.pages.dev/sitemap.xml
