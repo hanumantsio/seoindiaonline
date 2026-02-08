@@ -9,15 +9,31 @@
 
 <style>
 body{font-family:Arial;background:#f4f6f8;margin:0}
+nav{background:#062f4f;padding:12px;text-align:center}
+nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
 .container{max-width:1200px;margin:30px auto;background:#fff;padding:20px}
 .editor-wrap{display:flex;gap:20px}
-textarea{width:50%;height:400px;font-family:monospace}
-.preview{width:50%;border:1px solid #ccc;padding:15px;background:#fafafa}
-button{margin-top:15px;padding:10px 20px;background:#0a3d62;color:#fff;border:none}
+textarea{width:50%;height:420px;font-family:monospace}
+.preview{
+  width:50%;
+  border:1px solid #ccc;
+  padding:15px;
+  background:#fafafa;
+  overflow:auto
+}
+.preview img{max-width:100%;height:auto}
+.preview iframe{max-width:100%}
+button{margin-top:15px;padding:10px 20px;background:#0a3d62;color:#fff;border:none;cursor:pointer}
 </style>
 </head>
 
 <body>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="posts.html">Posts</a>
+  <a href="submit-post.html">Submit</a>
+</nav>
 
 <div class="container">
   <h1>Submit Blog Post</h1>
@@ -25,26 +41,32 @@ button{margin-top:15px;padding:10px 20px;background:#0a3d62;color:#fff;border:no
   <input id="title" placeholder="Post Title" style="width:100%;padding:10px;margin-bottom:10px">
 
   <div class="editor-wrap">
-    <textarea id="content" placeholder="HTML / Markdown / BBCode supported"></textarea>
-    <div class="preview" id="preview">Live preview…</div>
+    <textarea id="content" placeholder="Write HTML / Markdown / BBCode. Images & videos allowed."></textarea>
+    <div class="preview" id="preview">
+      <em>Live preview will appear here…</em>
+    </div>
   </div>
 
-  <button id="publish">Publish</button>
+  <button id="publish">Publish Post</button>
 </div>
 
 <script type="module">
 import { auth, db } from "./firebase.js";
+import { onAuthStateChanged } from
+"https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 import {
   addDoc, collection, serverTimestamp,
   query, where, getDocs
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+/* 🔒 LOGIN REQUIRED */
+onAuthStateChanged(auth, user => {
+  if (!user) window.location.href = "login.html";
+});
+
 /* ---------- SLUG ---------- */
 const slugify = t =>
-  t.toLowerCase()
-   .trim()
-   .replace(/[^a-z0-9]+/g,"-")
-   .replace(/(^-|-$)/g,"");
+  t.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
 
 async function uniqueSlug(base){
   let s = base, i = 1;
@@ -55,32 +77,36 @@ async function uniqueSlug(base){
   }
 }
 
-/* ---------- PARSER (ANCHOR SAFE) ---------- */
-function parse(text){
+/* ---------- SAFE HYBRID PARSER ---------- */
+function parseContent(text){
   let html = text;
 
-  // Headings
+  /* Remove scripts for safety */
+  html = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
+
+  /* Markdown enhancements */
   html = html.replace(/^### (.*)$/gim,"<h3>$1</h3>");
   html = html.replace(/^## (.*)$/gim,"<h2>$1</h2>");
-
-  // Bold / italic
   html = html.replace(/\*\*(.*?)\*\*/gim,"<strong>$1</strong>");
   html = html.replace(/\*(.*?)\*/gim,"<em>$1</em>");
 
-  // BBCode links (CLICKABLE)
+  /* BBCode links */
   html = html.replace(
     /\[url=(.*?)\](.*?)\[\/url\]/gim,
     "<a href='$1' target='_blank' rel='nofollow'>$2</a>"
   );
 
-  // Lists
+  /* Lists */
   html = html.replace(/^\- (.*)$/gim,"<li>$1</li>");
   html = html.replace(/(<li>.*<\/li>)/gims,"<ul>$1</ul>");
 
-  // Paragraphs (CRITICAL – preserves anchors)
+  /* Paragraphs (does NOT break embeds) */
   html = html
     .split(/\n\s*\n/)
-    .map(p => `<p>${p.replace(/\n/g,"<br>")}</p>`)
+    .map(block => {
+      if (block.trim().startsWith("<")) return block;
+      return `<p>${block.replace(/\n/g,"<br>")}</p>`;
+    })
     .join("");
 
   return html;
@@ -88,7 +114,7 @@ function parse(text){
 
 /* ---------- LIVE PREVIEW ---------- */
 content.addEventListener("input",()=>{
-  preview.innerHTML = parse(content.value);
+  preview.innerHTML = parseContent(content.value);
 });
 
 /* ---------- PUBLISH ---------- */
@@ -103,7 +129,7 @@ publish.onclick = async () => {
   await addDoc(collection(db,"posts"),{
     title: title.value,
     slug,
-    content: parse(content.value),
+    content: parseContent(content.value),
     authorName: auth.currentUser.displayName,
     createdAt: serverTimestamp(),
     status: "published"
