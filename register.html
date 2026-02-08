@@ -1,148 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Register | SEO India Online</title>
-  <meta name="description" content="Create an account on SEO India Online to submit SEO-friendly articles.">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0a3d62">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0a3d62, #1e90ff);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .box {
-      background: #fff;
-      max-width: 440px;
-      width: 100%;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    h1 { text-align: center; color: #0a3d62; }
-    p { text-align: center; color: #666; font-size: 14px; }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      font-size: 15px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #0a3d62;
-      color: #fff;
-      border: none;
-      font-size: 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .captcha {
-      background: #eef6ff;
-      padding: 10px;
-      font-size: 14px;
-      margin-top: 10px;
-    }
-    .msg {
-      text-align: center;
-      margin-top: 12px;
-      font-size: 14px;
-      color: red;
-    }
-    .links {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-    .links a { color: #0a3d62; font-weight: bold; text-decoration: none; }
-  </style>
+<meta charset="UTF-8">
+<title>Register | SEO India Online Free Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
+<style>
+body{font-family:Arial;background:#f4f6f8;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
+.box{background:#fff;padding:30px;width:350px;border-radius:6px}
+input,button{width:100%;padding:10px;margin-bottom:12px}
+button{background:#0a3d62;color:#fff;border:none}
+</style>
 </head>
 
 <body>
-
 <div class="box">
-  <h1>Create Account</h1>
-  <p>Register to submit SEO-friendly articles</p>
+  <h2>Create Account</h2>
 
-  <input type="text" id="name" placeholder="Full Name" required>
-  <input type="email" id="email" placeholder="Email Address" required>
-  <input type="password" id="password" placeholder="Password (min 6 chars)" required>
+  <input id="name" placeholder="Full Name" required>
+  <input id="email" type="email" placeholder="Email" required>
+  <input id="password" type="password" placeholder="Password" required>
 
-  <!-- ✅ SIMPLE CAPTCHA -->
-  <div class="captcha">
-    What is <strong id="capA"></strong> + <strong id="capB"></strong> ?
-    <input type="number" id="captchaInput" placeholder="Your answer" required>
-  </div>
-
-  <button id="registerBtn">Create Account</button>
-
-  <div class="msg" id="message"></div>
-
-  <div class="links">
-    Already have an account? <a href="login.html">Login</a>
-  </div>
+  <button id="registerBtn">Register</button>
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    updateProfile
-  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { auth, db } from "./firebase.js";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import {
+  doc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCpMfebvCejqvlwoU7mVQXB500iE9xo8_8",
-    authDomain: "seoindiaonline-dec25.firebaseapp.com",
-    projectId: "seoindiaonline-dec25",
-    storageBucket: "seoindiaonline-dec25.firebasestorage.app",
-    messagingSenderId: "657989422876",
-    appId: "1:657989422876:web:01f521dbc140af58e774d9"
-  };
+registerBtn.onclick = async () => {
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  if (!name) return alert("Enter your full name");
 
-  // CAPTCHA numbers
-  const a = Math.floor(Math.random() * 9) + 1;
-  const b = Math.floor(Math.random() * 9) + 1;
-  document.getElementById("capA").textContent = a;
-  document.getElementById("capB").textContent = b;
+  const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-  document.getElementById("registerBtn").onclick = async () => {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const captcha = document.getElementById("captchaInput").value;
-    const msg = document.getElementById("message");
+  // Save name in Auth (CRITICAL)
+  await updateProfile(cred.user, { displayName: name });
 
-    msg.textContent = "";
+  // Save user profile
+  await setDoc(doc(db, "users", cred.user.uid), {
+    name,
+    email,
+    createdAt: serverTimestamp()
+  });
 
-    if (parseInt(captcha) !== a + b) {
-      msg.textContent = "Captcha answer is incorrect.";
-      return;
-    }
-
-    try {
-      const userCred = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCred.user, { displayName: name });
-      msg.style.color = "green";
-      msg.textContent = "Account created! Redirecting...";
-      setTimeout(() => location.href = "login.html", 1200);
-    } catch (err) {
-      msg.textContent = err.code + " : " + err.message;
-    }
-  };
+  location.href = "submit-post.html";
+};
 </script>
-
 </body>
 </html>
