@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8">
 
-<title>Blog Posts | SEO India Online Free Blog</title>
-<meta name="description" content="Browse digital marketing blog posts published on SEO India Online Free Blog.">
+<title>All Blog Posts | SEO India Online Free Blog</title>
+<meta name="description" content="Browse all digital marketing articles published on SEO India Online Free Blog.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Favicon -->
+<link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
+
+<meta property="og:site_name" content="SEO India Online Free Blog">
 
 <!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=GT-NFP4RC7H"></script>
@@ -23,26 +29,12 @@ nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
 .container{max-width:1000px;margin:30px auto;background:#fff;padding:30px}
 .post-item{margin-bottom:25px}
 .post-item a{color:#0a3d62;text-decoration:none}
-.pagination{text-align:center;margin-top:30px}
-.pagination a{
-  margin:0 5px;
-  padding:8px 14px;
-  border:1px solid #ccc;
-  text-decoration:none;
-  color:#062f4f;
-}
-.pagination strong{
-  margin:0 5px;
-  padding:8px 14px;
-  background:#062f4f;
-  color:#fff;
-}
+footer{background:#0a3d62;color:#fff;text-align:center;padding:15px}
 </style>
 </head>
 
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="index.html">Home</a>
   <a href="posts.html">Posts</a>
@@ -52,54 +44,41 @@ nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
 </nav>
 
 <div class="container">
-  <h1>All Blog Posts</h1>
-  <div id="postList">Loading…</div>
-  <div class="pagination" id="pagination"></div>
+  <h1>SEO India Online Free Blog – Posts</h1>
+  <div id="postList">Loading posts…</div>
 </div>
+
+<footer>
+© 2026 SEO India Online Free Blog
+</footer>
 
 <script type="module">
 import { db } from "./firebase.js";
-import {
-  collection, getDocs, query, orderBy
-} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { collection,getDocs,query,orderBy }
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-const PAGE_SIZE = 10;
-const page = parseInt(new URLSearchParams(location.search).get("page")) || 1;
+const list=document.getElementById("postList");
+list.innerHTML="";
 
-const list = document.getElementById("postList");
-const pagination = document.getElementById("pagination");
+const q=query(collection(db,"posts"),orderBy("createdAt","desc"));
+const snap=await getDocs(q);
 
-const q = query(collection(db,"posts"), orderBy("createdAt","desc"));
-const snap = await getDocs(q);
-
-const docs = snap.docs;
-const totalPages = Math.ceil(docs.length / PAGE_SIZE);
-
-list.innerHTML = "";
-
-docs
-  .slice((page-1)*PAGE_SIZE, page*PAGE_SIZE)
-  .forEach(d => {
-    const p = d.data();
-    list.innerHTML += `
-      <div class="post-item">
-        <h3>
-          <a href="post.html?id=${d.id}">
-            ${p.title}
-          </a>
-        </h3>
-      </div>
-    `;
-  });
-
-// Pagination links
-pagination.innerHTML = "";
-for (let i=1; i<=totalPages; i++) {
-  pagination.innerHTML +=
-    i === page
-      ? `<strong>${i}</strong>`
-      : `<a href="posts.html?page=${i}">${i}</a>`;
+if(snap.empty){
+  list.innerHTML="<p>No posts found.</p>";
 }
+
+snap.forEach(d=>{
+  const p=d.data();
+  list.innerHTML+=`
+    <div class="post-item">
+      <h3>
+        <a href="post.html?id=${d.id}">
+          ${p.title}
+        </a>
+      </h3>
+    </div>
+  `;
+});
 </script>
 
 </body>
