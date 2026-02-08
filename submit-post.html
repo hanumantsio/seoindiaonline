@@ -14,16 +14,9 @@ nav a{color:#fff;margin:0 12px;font-weight:bold;text-decoration:none}
 .container{max-width:1200px;margin:30px auto;background:#fff;padding:20px}
 .editor-wrap{display:flex;gap:20px}
 textarea{width:50%;height:420px;font-family:monospace}
-.preview{
-  width:50%;
-  border:1px solid #ccc;
-  padding:15px;
-  background:#fafafa;
-  overflow:auto
-}
-.preview img{max-width:100%;height:auto}
-.preview iframe{max-width:100%}
+.preview{width:50%;border:1px solid #ccc;padding:15px;background:#fafafa;overflow:auto}
 button{margin-top:15px;padding:10px 20px;background:#0a3d62;color:#fff;border:none;cursor:pointer}
+.error{color:#c0392b;font-size:14px;margin-bottom:10px}
 </style>
 </head>
 
@@ -38,10 +31,14 @@ button{margin-top:15px;padding:10px 20px;background:#0a3d62;color:#fff;border:no
 <div class="container">
   <h1>Submit Blog Post</h1>
 
-  <input id="title" placeholder="Post Title" style="width:100%;padding:10px;margin-bottom:10px">
+  <div id="error" class="error"></div>
+
+  <input id="title" placeholder="Post Title *"
+         style="width:100%;padding:10px;margin-bottom:10px">
 
   <div class="editor-wrap">
-    <textarea id="content" placeholder="Write HTML / Markdown / BBCode. Images & videos allowed."></textarea>
+    <textarea id="content"
+      placeholder="Write content (HTML / Markdown / BBCode). Images & videos allowed."></textarea>
     <div class="preview" id="preview">
       <em>Live preview will appear here…</em>
     </div>
@@ -59,9 +56,23 @@ import {
   query, where, getDocs
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+const errorBox = document.getElementById("error");
+let currentUser = null;
+
 /* 🔒 LOGIN REQUIRED */
 onAuthStateChanged(auth, user => {
-  if (!user) window.location.href = "login.html";
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  currentUser = user;
+
+  // 🚨 HARD BLOCK: author name must exist
+  if (!user.displayName || !user.displayName.trim()) {
+    errorBox.textContent =
+      "Your profile name is missing. Please re-register or contact support.";
+    document.getElementById("publish").disabled = true;
+  }
 });
 
 /* ---------- SLUG ---------- */
@@ -77,30 +88,25 @@ async function uniqueSlug(base){
   }
 }
 
-/* ---------- SAFE HYBRID PARSER ---------- */
+/* ---------- SAFE PARSER ---------- */
 function parseContent(text){
   let html = text;
 
-  /* Remove scripts for safety */
   html = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
 
-  /* Markdown enhancements */
   html = html.replace(/^### (.*)$/gim,"<h3>$1</h3>");
   html = html.replace(/^## (.*)$/gim,"<h2>$1</h2>");
   html = html.replace(/\*\*(.*?)\*\*/gim,"<strong>$1</strong>");
   html = html.replace(/\*(.*?)\*/gim,"<em>$1</em>");
 
-  /* BBCode links */
   html = html.replace(
     /\[url=(.*?)\](.*?)\[\/url\]/gim,
     "<a href='$1' target='_blank' rel='nofollow'>$2</a>"
   );
 
-  /* Lists */
   html = html.replace(/^\- (.*)$/gim,"<li>$1</li>");
   html = html.replace(/(<li>.*<\/li>)/gims,"<ul>$1</ul>");
 
-  /* Paragraphs (does NOT break embeds) */
   html = html
     .split(/\n\s*\n/)
     .map(block => {
@@ -119,18 +125,37 @@ content.addEventListener("input",()=>{
 
 /* ---------- PUBLISH ---------- */
 publish.onclick = async () => {
-  if (content.value.length < 200) {
-    alert("Minimum 200 words required");
+  errorBox.textContent = "";
+
+  const titleVal = title.value.trim();
+  const contentVal = content.value.trim();
+
+  // ❌ Title required
+  if (!titleVal) {
+    errorBox.textContent = "Post title is required.";
     return;
   }
 
-  const slug = await uniqueSlug(slugify(title.value));
+  // ❌ Content length
+  if (contentVal.length < 200) {
+    errorBox.textContent = "Minimum 200 words required.";
+    return;
+  }
+
+  // ❌ Author missing (double safety)
+  if (!currentUser || !currentUser.displayName) {
+    errorBox.textContent =
+      "Author name missing. Cannot publish post.";
+    return;
+  }
+
+  const slug = await uniqueSlug(slugify(titleVal));
 
   await addDoc(collection(db,"posts"),{
-    title: title.value,
+    title: titleVal,
     slug,
-    content: parseContent(content.value),
-    authorName: auth.currentUser.displayName,
+    content: parseContent(contentVal),
+    authorName: currentUser.displayName,
     createdAt: serverTimestamp(),
     status: "published"
   });
