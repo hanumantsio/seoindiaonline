@@ -2,25 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SEO India Online Free Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<title>SEO India Online Free Blog</title>
+
+<!-- 🔍 Search Engine Verification -->
+<meta name="google-site-verification" content="72Clx-WpX0A8knp8PGThwYYV5uDEoXaWWwEkuj6kyBg" />
+<meta name="msvalidate.01" content="439FAFB45A1A046AD53883E98A53FED0" />
+
 <!-- SEO -->
-<meta name="description" content="SEO India Online Free Blog is a digital marketing and SEO blogging platform where experts share tutorials, strategies, and practical insights.">
-<link rel="canonical" href="https://hanumantsio.github.io/seoindiaonline/">
+<meta name="description" content="SEO India Online Free Blog is a free digital marketing and SEO blogging platform where experts publish practical guides, strategies, and insights.">
+<link rel="canonical" href="https://seoindiaonline.pages.dev/">
 <meta name="robots" content="index,follow">
 
-<!-- VERIFICATION -->
-<meta name="google-site-verification" content="Dc7Qh7_59JPa3z0dn_QmMgWXft0UVMyMlKksWO44NdQ">
-<meta name="msvalidate.01" content="439FAFB45A1A046AD53883E98A53FED0">
-
-<!-- SOCIAL -->
+<!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="SEO India Online Free Blog">
 <meta property="og:description" content="A free SEO & digital marketing blogging platform by SEO India Online.">
-<meta property="og:url" content="https://hanumantsio.github.io/seoindiaonline/">
+<meta property="og:url" content="https://seoindiaonline.pages.dev/">
 <meta property="og:image" content="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
 
+<!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SEO India Online Free Blog">
 <meta name="twitter:description" content="Learn SEO and digital marketing from expert contributors at SEO India Online Free Blog.">
@@ -28,40 +30,78 @@
 
 <link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
 
-<!-- SCHEMA -->
+<!-- Schema: Organization -->
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
   "@type":"Organization",
   "name":"SEO India Online Free Blog",
-  "url":"https://hanumantsio.github.io/seoindiaonline/",
+  "url":"https://seoindiaonline.pages.dev/",
   "logo":"https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png",
   "sameAs":["https://seoindiaonline.com"]
 }
 </script>
 
+<!-- Schema: Website -->
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
   "@type":"WebSite",
   "name":"SEO India Online Free Blog",
-  "url":"https://hanumantsio.github.io/seoindiaonline/"
+  "url":"https://seoindiaonline.pages.dev/"
 }
 </script>
 
 <style>
-:root{--primary:#0a3d62;--bg:#f4f6f8}
-body{margin:0;font-family:system-ui;background:var(--bg)}
-nav{background:#062f4f;padding:14px 20px;display:flex;justify-content:space-between}
-nav a,nav button{color:#fff;text-decoration:none;margin-right:14px;font-weight:600;background:none;border:none;cursor:pointer}
-.hero{background:linear-gradient(135deg,#0a3d62,#1e6091);color:#fff;padding:50px 20px;text-align:center}
-.container{max-width:1200px;margin:30px auto;padding:0 15px}
-.posts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
-.post{background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
-.post a{color:var(--primary);text-decoration:none;font-weight:600}
-.pagination{text-align:center;margin:30px}
-.pagination a{margin:0 10px;text-decoration:none;font-weight:600;color:var(--primary)}
-footer{background:#062f4f;color:#fff;text-align:center;padding:20px}
+:root{--primary:#0a3d62;--bg:#f4f6f8;--card:#fff}
+body{margin:0;font-family:system-ui;background:var(--bg);color:#222}
+nav{
+  background:#062f4f;
+  padding:14px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+nav a{
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  margin-right:15px
+}
+.hero{
+  background:linear-gradient(135deg,#0a3d62,#1e6091);
+  color:#fff;
+  padding:50px 20px;
+  text-align:center
+}
+.container{
+  max-width:1200px;
+  margin:30px auto;
+  padding:0 15px
+}
+.posts{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px
+}
+.post{
+  background:var(--card);
+  padding:20px;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,.05)
+}
+.post a{
+  color:var(--primary);
+  font-weight:600;
+  text-decoration:none
+}
+footer{
+  background:#062f4f;
+  color:#fff;
+  text-align:center;
+  padding:20px;
+  font-size:14px
+}
 </style>
 </head>
 
@@ -69,14 +109,12 @@ footer{background:#062f4f;color:#fff;text-align:center;padding:20px}
 
 <nav>
   <div>
-    <a href="index.html">Home</a>
-    <a href="posts.html">Posts</a>
-    <a href="submit-post.html" id="submitLink" style="display:none">Submit</a>
+    <a href="/">Home</a>
+    <a href="/posts.html">Posts</a>
   </div>
   <div>
-    <a href="login.html" id="loginLink">Login</a>
-    <a href="register.html" id="registerLink">Register</a>
-    <button id="logoutBtn" style="display:none">Logout</button>
+    <a href="/login.html">Login</a>
+    <a href="/register.html">Register</a>
   </div>
 </nav>
 
@@ -88,39 +126,23 @@ footer{background:#062f4f;color:#fff;text-align:center;padding:20px}
 <main class="container">
   <h2>Latest Posts</h2>
   <div id="posts" class="posts">Loading posts…</div>
-
-  <div class="pagination" id="pagination"></div>
 </main>
 
-<footer>© 2026 SEO India Online Free Blog</footer>
+<footer>
+  © 2026 SEO India Online Free Blog
+</footer>
 
-<!-- POSTS + PAGINATION -->
+<!-- POSTS LOAD (20 POSTS, CLEAN URLs) -->
 <script type="module">
 import { db } from "./firebase.js";
-import {
-  collection, query, orderBy, limit, startAfter, getDocs
-} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { collection, query, orderBy, limit, getDocs }
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-const POSTS_PER_PAGE = 20;
-const params = new URLSearchParams(location.search);
-const page = parseInt(params.get("page") || "1");
-
-let lastDoc = null;
-
-// Get previous pages cursor
-if(page > 1){
-  const prevQ = query(
-    collection(db,"posts"),
-    orderBy("createdAt","desc"),
-    limit((page-1)*POSTS_PER_PAGE)
-  );
-  const prevSnap = await getDocs(prevQ);
-  lastDoc = prevSnap.docs[prevSnap.docs.length - 1];
-}
-
-const q = lastDoc
-  ? query(collection(db,"posts"), orderBy("createdAt","desc"), startAfter(lastDoc), limit(POSTS_PER_PAGE))
-  : query(collection(db,"posts"), orderBy("createdAt","desc"), limit(POSTS_PER_PAGE));
+const q = query(
+  collection(db,"posts"),
+  orderBy("createdAt","desc"),
+  limit(20)
+);
 
 const snap = await getDocs(q);
 posts.innerHTML = "";
@@ -128,37 +150,16 @@ posts.innerHTML = "";
 snap.forEach(d=>{
   const p = d.data();
   if(!p.slug) return;
+
   posts.innerHTML += `
     <div class="post">
-      <a href="post.html?slug=${p.slug}">${p.title}</a>
-    </div>`;
+      <a href="/post/${p.slug}">
+        ${p.title}
+      </a>
+    </div>
+  `;
 });
-
-// Pagination links
-pagination.innerHTML = `
-  ${page > 1 ? `<a href="?page=${page-1}">← Previous</a>` : ""}
-  ${snap.size === POSTS_PER_PAGE ? `<a href="?page=${page+1}">Next →</a>` : ""}
-`;
-</script>
-
-<!-- AUTH UI -->
-<script type="module">
-import { auth } from "./firebase.js";
-import { onAuthStateChanged, signOut }
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-
-onAuthStateChanged(auth,user=>{
-  logoutBtn.style.display = user ? "inline" : "none";
-  submitLink.style.display = user ? "inline" : "none";
-  loginLink.style.display = user ? "none" : "inline";
-  registerLink.style.display = user ? "none" : "inline";
-});
-
-logoutBtn.onclick = async () => {
-  await signOut(auth);
-  location.href="index.html";
-};
 </script>
 
 </body>
-  </html>
+</html>
