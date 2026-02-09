@@ -2,117 +2,43 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>SEO India Online Free Blog</title>
-
-<!-- 🔍 Search Engine Verification -->
-<meta name="google-site-verification" content="72Clx-WpX0A8knp8PGThwYYV5uDEoXaWWwEkuj6kyBg">
-<meta name="msvalidate.01" content="439FAFB45A1A046AD53883E98A53FED0">
-
-<!-- SEO -->
-<meta name="description" content="SEO India Online Free Blog is a free digital marketing and SEO blogging platform where professionals publish guides, strategies, and insights.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Official free SEO blog by SEO India Online sharing SEO and digital marketing insights.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://seoindiaonline.pages.dev/">
 
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:title" content="SEO India Online Free Blog">
-<meta property="og:description" content="A free SEO & digital marketing blogging platform by SEO India Online.">
-<meta property="og:url" content="https://seoindiaonline.pages.dev/">
-<meta property="og:image" content="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
-
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SEO India Online Free Blog">
-<meta name="twitter:description" content="Learn SEO and digital marketing from expert contributors.">
-<meta name="twitter:image" content="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
-
 <link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
 
-<!-- Schema: Organization -->
+<!-- Author Schema -->
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "SEO India Online Free Blog",
-  "url": "https://seoindiaonline.pages.dev/",
-  "logo": "https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png",
-  "sameAs": ["https://seoindiaonline.com"]
+ "@context":"https://schema.org",
+ "@type":"Person",
+ "@id":"https://seoindiaonline.pages.dev/#author",
+ "name":"Hanumant Kumar",
+ "jobTitle":"SEO Executive",
+ "email":"mailto:hanumant.seoindiaonline@gmail.com",
+ "worksFor":{
+   "@type":"Organization",
+   "name":"SEO India Online",
+   "url":"https://seoindiaonline.com"
+ }
 }
 </script>
 
-<!-- Schema: WebSite -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "SEO India Online Free Blog",
-  "url": "https://seoindiaonline.pages.dev/"
-}
-</script>
+<script type="application/ld+json" id="homeItemListSchema"></script>
 
 <style>
-:root{
-  --primary:#0a3d62;
-  --dark:#062f4f;
-  --bg:#f4f6f8;
-  --card:#ffffff;
-}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  background:var(--bg);
-  color:#222;
-}
-nav{
-  background:var(--dark);
-  padding:14px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-nav a{
-  color:#fff;
-  text-decoration:none;
-  font-weight:600;
-  margin-right:16px;
-}
-.hero{
-  background:linear-gradient(135deg,#0a3d62,#1e6091);
-  color:#fff;
-  padding:60px 20px;
-  text-align:center;
-}
-.hero h1{margin:0 0 10px}
-.container{
-  max-width:1200px;
-  margin:40px auto;
-  padding:0 15px;
-}
-.posts{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:20px;
-}
-.post{
-  background:var(--card);
-  padding:20px;
-  border-radius:8px;
-  box-shadow:0 2px 6px rgba(0,0,0,.05);
-}
-.post a{
-  color:var(--primary);
-  font-weight:600;
-  text-decoration:none;
-}
-footer{
-  background:var(--dark);
-  color:#fff;
-  text-align:center;
-  padding:20px;
-  font-size:14px;
-}
+body{margin:0;font-family:system-ui;background:#f4f6f8}
+nav{background:#062f4f;padding:14px 20px;display:flex;justify-content:space-between}
+nav a{color:#fff;text-decoration:none;font-weight:600;margin-right:16px}
+.hero{text-align:center;padding:40px 20px;background:#0a3d62;color:#fff}
+.container{max-width:1100px;margin:40px auto;padding:0 15px}
+.post{background:#fff;padding:20px;border-radius:8px;margin-bottom:20px}
+.post a{font-size:18px;font-weight:700;color:#0a3d62;text-decoration:none}
+button{padding:12px 24px;border:none;background:#062f4f;color:#fff;border-radius:6px}
+footer{background:#062f4f;color:#fff;text-align:center;padding:20px}
 </style>
 </head>
 
@@ -121,57 +47,83 @@ footer{
 <nav>
   <div>
     <a href="/">Home</a>
-    <a href="/posts.html">Posts</a>
+    <a href="/submit-post.html" id="submitLink" style="display:none">Submit</a>
   </div>
   <div>
-    <a href="/login.html">Login</a>
-    <a href="/register.html">Register</a>
+    <a href="/login.html" id="loginLink">Login</a>
+    <a href="/register.html" id="registerLink">Register</a>
+    <a href="#" id="logoutLink" style="display:none">Logout</a>
   </div>
 </nav>
 
-<section class="hero">
+<div class="hero">
   <h1>SEO India Online Free Blog</h1>
-  <p>A free platform to publish SEO & digital marketing articles.</p>
+  <p>Official blogging platform of SEO India Online</p>
+</div>
+
+<section style="background:#fff;padding:30px;text-align:center">
+  <p><strong>Hanumant Kumar</strong>, SEO Executive at 
+    <a href="https://seoindiaonline.com" target="_blank">SEO India Online</a><br>
+    📧 <a href="mailto:hanumant.seoindiaonline@gmail.com">hanumant.seoindiaonline@gmail.com</a>
+  </p>
 </section>
 
 <main class="container">
-  <h2>Latest Posts</h2>
-  <div id="posts" class="posts">Loading posts…</div>
+  <div id="posts"></div>
+  <div style="text-align:center">
+    <button id="loadMore">Load more</button>
+  </div>
 </main>
 
-<footer>
-  © 2026 SEO India Online Free Blog · Contact: hanumant.seoindiaonline@gmail.com
-</footer>
+<footer>© 2026 SEO India Online Free Blog</footer>
 
-<!-- Load latest posts (clean URLs) -->
 <script type="module">
-import { db } from "./firebase.js";
-import {
-  collection, query, orderBy, limit, getDocs
-} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { db, auth } from "./firebase.js";
+import { collection, query, orderBy, limit, startAfter, getDocs } 
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { onAuthStateChanged, signOut } 
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-const q = query(
-  collection(db, "posts"),
-  orderBy("createdAt", "desc"),
-  limit(20)
-);
+let lastDoc=null, page=1;
+const POSTS_PER_PAGE=20;
+const itemList=[];
+let position=1;
 
-const snap = await getDocs(q);
-posts.innerHTML = "";
+async function loadPosts(){
+ let q=query(collection(db,"posts"),orderBy("createdAt","desc"),limit(POSTS_PER_PAGE));
+ if(lastDoc) q=query(collection(db,"posts"),orderBy("createdAt","desc"),startAfter(lastDoc),limit(POSTS_PER_PAGE));
+ const snap=await getDocs(q);
+ if(snap.empty)return;
+ lastDoc=snap.docs[snap.docs.length-1];
+ snap.forEach(d=>{
+  const p=d.data();
+  const text=p.content.replace(/<[^>]+>/g,"").slice(0,140)+"…";
+  posts.innerHTML+=`
+   <article class="post">
+     <a href="/post/${p.slug}">${p.title}</a>
+     <p>${text}</p>
+   </article>`;
+  itemList.push({
+   "@type":"ListItem",
+   "position":position++,
+   "url":location.origin+"/post/"+p.slug,
+   "name":p.title
+  });
+ });
+ document.getElementById("homeItemListSchema").textContent=
+ JSON.stringify({"@context":"https://schema.org","@type":"ItemList","itemListElement":itemList});
+}
+loadPosts();
+loadMore.onclick=loadPosts;
 
-snap.forEach(doc => {
-  const p = doc.data();
-  if (!p.slug) return;
-
-  posts.innerHTML += `
-    <div class="post">
-      <a href="/post/${p.slug}">
-        ${p.title}
-      </a>
-    </div>
-  `;
+onAuthStateChanged(auth,u=>{
+ submitLink.style.display=u?"inline":"none";
+ logoutLink.style.display=u?"inline":"none";
+ loginLink.style.display=u?"none":"inline";
+ registerLink.style.display=u?"none":"inline";
 });
+logoutLink.onclick=e=>{e.preventDefault();signOut(auth).then(()=>location.reload());};
 </script>
 
 </body>
-  </html>
+</html>
