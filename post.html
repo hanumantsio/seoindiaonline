@@ -2,183 +2,64 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title id="titleTag">Loading…</title>
-<meta name="description" id="metaDescription">
+<title>Post</title>
 <meta name="robots" content="index,follow">
-
-<!-- Canonical -->
 <link rel="canonical" id="canonicalLink">
-
-<!-- Open Graph -->
-<meta property="og:type" content="article">
-<meta property="og:title" id="ogTitle">
-<meta property="og:description" id="ogDescription">
-<meta property="og:url" id="ogUrl">
-<meta property="og:image" content="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
-
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" id="twTitle">
-<meta name="twitter:description" id="twDescription">
-<meta name="twitter:image" content="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
-
-<link rel="icon" href="https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png">
-
-<!-- Article Schema -->
-<script type="application/ld+json" id="articleSchema"></script>
-
-<!-- Breadcrumb Schema -->
+<script type="application/ld+json" id="blogSchema"></script>
 <script type="application/ld+json" id="breadcrumbSchema"></script>
-
-<style>
-body{
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  margin:0;
-  background:#f4f6f8;
-  color:#222;
-}
-nav{
-  background:#062f4f;
-  padding:14px 20px;
-}
-nav a{
-  color:#fff;
-  text-decoration:none;
-  font-weight:600;
-}
-.container{
-  max-width:900px;
-  margin:30px auto;
-  padding:20px;
-  background:#fff;
-  border-radius:8px;
-  box-shadow:0 2px 6px rgba(0,0,0,.05);
-}
-h1{margin-top:0}
-.meta{
-  font-size:14px;
-  color:#666;
-  margin-bottom:20px;
-}
-footer{
-  text-align:center;
-  padding:20px;
-  font-size:14px;
-  color:#666;
-}
-</style>
 </head>
-
 <body>
 
-<nav>
-  <a href="/">Home</a>
-</nav>
+<nav><a href="/">Home</a></nav>
 
-<main class="container">
-  <h1 id="postTitle">Loading…</h1>
-  <div class="meta" id="postMeta"></div>
-  <article id="postContent"></article>
-</main>
+<article>
+ <nav><a href="/">Home</a> › <span id="crumb"></span></nav>
+ <h1 id="title"></h1>
+ <p id="meta"></p>
+ <div id="content"></div>
+</article>
 
-<footer>
-  © 2026 SEO India Online Free Blog
-</footer>
-
-<!-- POST LOGIC -->
 <script type="module">
-import { db } from "./firebase.js";
+import { db } from "../firebase.js";
 import { collection, query, where, getDocs }
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-const slug = location.pathname.startsWith("/post/")
-  ? location.pathname.replace("/post/","")
-  : new URLSearchParams(location.search).get("slug");
+const slug=location.pathname.split("/post/")[1];
+const q=query(collection(db,"posts"),where("slug","==",slug));
+const snap=await getDocs(q);
+if(snap.empty)document.body.innerHTML="Not found";
 
-if(!slug){
-  document.body.innerHTML = "Post not found";
-  throw new Error("No slug");
-}
+const p=snap.docs[0].data();
+title.textContent=p.title;
+crumb.textContent=p.title;
+content.innerHTML=p.content;
 
-const q = query(collection(db,"posts"), where("slug","==",slug));
-const snap = await getDocs(q);
+const ADMIN="hanumant.seoindiaonline@gmail.com";
+const author=p.authorEmail===ADMIN?"Hanumant Kumar":`${p.authorName} (Guest)`;
+meta.textContent=`By ${author} · ${new Date(p.createdAt).toDateString()}`;
 
-if(snap.empty){
-  document.body.innerHTML = "Post not found";
-  throw new Error("Post not found");
-}
+const url=location.origin+"/post/"+p.slug;
+canonicalLink.href=url;
 
-const post = snap.docs[0].data();
-
-/* Populate content */
-postTitle.textContent = post.title;
-postContent.innerHTML = post.content;
-postMeta.textContent = `Author: ${post.authorName || "SEO India Online"} | Published`;
-
-const description =
-  post.content.replace(/<[^>]*>/g,"").slice(0,155);
-
-/* SEO meta */
-titleTag.textContent = post.title + " | SEO India Online Free Blog";
-metaDescription.content = description;
-
-/* Clean canonical URL */
-const cleanURL = location.origin + "/post/" + post.slug;
-canonicalLink.href = cleanURL;
-
-/* Open Graph / Twitter */
-ogTitle.content = post.title;
-ogDescription.content = description;
-ogUrl.content = cleanURL;
-
-twTitle.content = post.title;
-twDescription.content = description;
-
-/* Article Schema */
-articleSchema.textContent = JSON.stringify({
-  "@context":"https://schema.org",
-  "@type":"Article",
-  "headline": post.title,
-  "author":{
-    "@type":"Person",
-    "name": post.authorName || "SEO India Online"
-  },
-  "publisher":{
-    "@type":"Organization",
-    "name":"SEO India Online Free Blog",
-    "logo":{
-      "@type":"ImageObject",
-      "url":"https://seoindiaonline.com/wp-content/uploads/2025/04/logo.png"
-    }
-  },
-  "mainEntityOfPage":{
-    "@type":"WebPage",
-    "@id": cleanURL
-  }
+blogSchema.textContent=JSON.stringify({
+ "@context":"https://schema.org",
+ "@type":"BlogPosting",
+ "headline":p.title,
+ "author":{"@type":"Person","name":author},
+ "publisher":{"@type":"Organization","name":"SEO India Online Free Blog"},
+ "datePublished":p.createdAt,
+ "url":url
 });
 
-/* Breadcrumb Schema */
-breadcrumbSchema.textContent = JSON.stringify({
-  "@context":"https://schema.org",
-  "@type":"BreadcrumbList",
-  "itemListElement":[
-    {
-      "@type":"ListItem",
-      "position":1,
-      "name":"Home",
-      "item": location.origin + "/"
-    },
-    {
-      "@type":"ListItem",
-      "position":2,
-      "name": post.title,
-      "item": cleanURL
-    }
-  ]
+breadcrumbSchema.textContent=JSON.stringify({
+ "@context":"https://schema.org",
+ "@type":"BreadcrumbList",
+ "itemListElement":[
+  {"@type":"ListItem","position":1,"name":"Home","item":location.origin},
+  {"@type":"ListItem","position":2,"name":p.title,"item":url}
+ ]
 });
 </script>
 
 </body>
-  </html>
+</html>
